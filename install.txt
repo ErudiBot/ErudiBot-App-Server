@@ -1,0 +1,7 @@
+npm install discord.js dotenv openai
+
+//goto https://platform.openai.com/ to get openai key
+//read doc https://platform.openai.com/docs/libraries
+
+
+start bot: node index.js
