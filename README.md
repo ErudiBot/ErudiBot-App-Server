@@ -23,8 +23,9 @@ Follow these steps to set up your development environment:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Nathathaii/ErudiBot.git
-   cd ErudiBot
+   git init
+   git clone https://github.com/Nathathaii/ErudiBot-app-server.git
+   cd ErudiBot-app-server
    ```
 
 2. **Set up**:
