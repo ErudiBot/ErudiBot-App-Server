@@ -30,7 +30,6 @@ Follow these steps to set up your development environment:
 
 2. **Set up**:
    ```bash
-   npm init
    npm install
    ```
 
@@ -39,11 +38,17 @@ Follow these steps to set up your development environment:
    ```bash
    TOKEN = 
    OPENAI_API_KEY = 
+   APP_ID = 
+   ```
+
+4. **Register discord bot commands**:
+   ```bash
+   node register-commands.js
    ```
 
 ## Usage
 To run your bot locally, use the following command:
    ```bash
-   node index.mjs
+   nodemon
    ```
 
