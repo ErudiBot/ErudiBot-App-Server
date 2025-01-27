@@ -64,14 +64,13 @@ client.once('ready', async(c) => {
     console.log(`✅ ${c.user.tag} is online!`);
 });
 
-//listen to users' message
-// client.on('messageCreate',(message)=>{
-//     console.log(message.content);
-//     if(!message.auther) return;
-//     if(message.content === 'erudibot'){
-//         message.reply("Hi! I'm ErudiBot. 👋")
-//     }
-// })
+// listen to users' message
+client.on('messageCreate',(message)=>{
+    console.log(message);
+    if(message.content === 'erudibot'){
+        message.reply("Hi! I'm ErudiBot. 👋")
+    }
+})
 
 // Handle interactions (e.g., slash commands)
 client.on('interactionCreate', async (interaction) => {

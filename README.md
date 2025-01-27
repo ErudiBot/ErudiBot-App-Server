@@ -1,6 +1,7 @@
-# ErudiBot
+# ErudiBot Application Server
 
 A Discord bot that utilizes algorithms and machine learning to enhance team communication and cognition.
+This repository is the application server of Erudibot. It will connect to external api and Erudibot backend service.
 
 ## Table of Contents
 
@@ -25,21 +26,18 @@ Follow these steps to set up your development environment:
    ```bash
    git init
    git clone https://github.com/Nathathaii/ErudiBot-app-server.git
-   cd ErudiBot-app-server
+   cd ErudiBot-App-Server
    ```
 
 2. **Set up**:
    ```bash
+   npm init
    npm install
    ```
 
 3. **Create .env file**:
-   State these variables in .env file
-   ```bash
-   TOKEN = 
-   OPENAI_API_KEY = 
-   APP_ID = 
-   ```
+   State variables in .env file
+
 
 4. **Register discord bot commands**:
    ```bash
