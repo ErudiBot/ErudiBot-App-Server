@@ -7,7 +7,7 @@ const openai = new OpenAI({
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('chat-test')
+        .setName('chat-gpt')
         .setDescription('Interact with GPT-4 for a conversation')
         .addStringOption(option =>
             option
@@ -31,7 +31,7 @@ export default {
 
             // Send the conversation to OpenAI and get the response
             const response = await openai.chat.completions.create({
-                model: 'gpt-3.5-turbo',
+                model: 'gpt-4o-mini',
                 messages: conversation,
             });
 

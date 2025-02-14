@@ -20,7 +20,8 @@ client.commands = new Collection();
 // Load commands dynamically------------------------------------------------------------------
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const commands = [];
-// Use an async function to load the commands correctly
+
+
 (async () => {
     for (const file of commandFiles) {
         try {
@@ -45,10 +46,30 @@ const commands = [];
     try {
         console.log('Refreshing application (/) commands...');
         await rest.put(
-            Routes.applicationCommands(process.env.APP_ID),
-            { body: commands },
-        );
+            // Routes.applicationCommands(process.env.APP_ID),
+            Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
+        {
+            body: []
+        })
+        console.log('Delete old commands 🗑️');
+
+        ////global register can take up to 1 hour to process by discord. Discord limits this request to 1 request per 5 minutes
+        // await rest.put(
+        //     Routes.applicationCommands(process.env.APP_ID),
+        // {
+        //     body: commands
+        // })
+
+        ////register in a server. Limit = 1 request per second. 
+        await rest.put(
+            Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
+            { body: commands }
+          );
+
+
         console.log('Successfully reloaded application (/) commands.');
+        console.log('Loaded commands:', commands.map(cmd => cmd.name).join(', '));
+
     } catch (error) {
         console.error('Error refreshing commands:', error);
     }
@@ -74,10 +95,11 @@ client.on('messageCreate',(message)=>{
 
 // Handle interactions (e.g., slash commands)
 client.on('interactionCreate', async (interaction) => {
+    console.log("call command")
     if (!interaction.isCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
- 
+    console.log(command)
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);
         return;

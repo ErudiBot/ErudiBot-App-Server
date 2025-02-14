@@ -1,26 +1,7 @@
 import { ApplicationCommandOptionType, REST, Routes } from 'discord.js';
 import 'dotenv/config';
 
-const commands = [
-    // {
-    //     name:'add',
-    //     description:'add two numbers',
-    //     options: [
-    //         {
-    //             name: 'first-number',
-    //             description: 'The first number',
-    //             type: ApplicationCommandOptionType.Number,
-    //             required: true,
-    //         },
-    //         {
-    //             name: 'second-number',
-    //             description: 'The second number',
-    //             type: ApplicationCommandOptionType.Number,
-    //             required: true,
-    //         }
-    //     ]
-    // }
-];
+const commands = [];
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
