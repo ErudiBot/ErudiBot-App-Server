@@ -13,7 +13,7 @@ export default {
                 .setRequired(true)),
 
     async execute(interaction) {
-        await interaction.deferReply({ ephemeral: true }); // Prevent timeout error
+        await interaction.deferReply();
 
         const audioFile = interaction.options.getAttachment('audio');
         if (!audioFile) {
@@ -44,7 +44,9 @@ export default {
                 return interaction.editReply({ content: result.error });
             }
 
-            return interaction.editReply({ content: `Transcription: ${result.text}\nProcessing time: ${result.executionTime} seconds` });
+            await interaction.editReply({ content: 'Transcription completed!' });
+            return interaction.channel.send(`**Transcription:**\n${result.text}\n⏳ Processing time: ${result.executionTime} seconds`);
+
         } catch (error) {
             console.error('File download error:', error);
             return interaction.editReply({ content: 'Failed to process the file.' });

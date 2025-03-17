@@ -41,7 +41,7 @@ Follow these steps to set up your development environment:
 
 4. **Register discord bot commands**:
    ```bash
-   node register-commands.js
+   node register-commands_global.js
    ```
 
 ## Usage

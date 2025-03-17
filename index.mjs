@@ -6,6 +6,8 @@ import path from 'path';
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMembers,
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMembers,
         IntentsBitField.Flags.GuildMessages,
@@ -45,20 +47,13 @@ const commands = [];
 
     try {
         console.log('Refreshing application (/) commands...');
-        await rest.put(
-            // Routes.applicationCommands(process.env.APP_ID),
-            Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
-        {
-            body: []
-        })
-        console.log('Delete old commands 🗑️');
-
-        ////global register can take up to 1 hour to process by discord. Discord limits this request to 1 request per 5 minutes
         // await rest.put(
-        //     Routes.applicationCommands(process.env.APP_ID),
+        //     // Routes.applicationCommands(process.env.APP_ID),
+        //     Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
         // {
-        //     body: commands
+        //     body: []
         // })
+        // console.log('Delete old commands 🗑️');
 
         ////register in a server. Limit = 1 request per second. 
         await rest.put(
@@ -87,7 +82,7 @@ client.once('ready', async(c) => {
 
 // listen to users' message
 client.on('messageCreate',(message)=>{
-    console.log(message);
+    // console.log(message);
     if(message.content === 'erudibot'){
         message.reply("Hi! I'm ErudiBot. 👋")
     }
@@ -99,14 +94,13 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
-    console.log(command)
+    // console.log(command)
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);
         return;
     }
 
     try {
-        console.log(command);
         await command.execute(interaction);
     } catch (error) {
         console.error('Error executing command:', error);

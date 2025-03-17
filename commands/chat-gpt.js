@@ -12,7 +12,7 @@ export default {
         .addStringOption(option =>
             option
                 .setName('message')
-                .setDescription('The message to send to GPT-3.5-turbo')
+                .setDescription('The message to send to gpt-4o-mini')
                 .setRequired(true)
         ),
 
