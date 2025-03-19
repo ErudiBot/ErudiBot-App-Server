@@ -26,6 +26,7 @@ export default {
             adapterCreator: voiceChannel.guild.voiceAdapterCreator
         });
 
+        const timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0]; // YYYYMMDDTHHMMSS
         await interaction.reply("Started recording... 🎤");
 
         const receiver = connection.receiver;
@@ -42,7 +43,7 @@ export default {
             });
 
             const opusDecoder = new prism.opus.Decoder({ frameSize: 960, channels: 1, rate: 48000 });
-            const filePath = `./recordings/${userId}.pcm`;
+            const filePath = `./recordings/${userId}_${timestamp}.pcm`;
             const outputStream = fs.createWriteStream(filePath);
 
             audioStream.pipe(opusDecoder).pipe(outputStream);
