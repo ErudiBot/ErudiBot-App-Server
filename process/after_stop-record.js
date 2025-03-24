@@ -2,7 +2,7 @@ import { transcribeAudio } from "../external_api/whisper_api.js";
 import { chatGPTMessage } from "../external_api/chatgpt-api.js";
 import { summarizePrompt,  correctTranscriptPrompt} from "./prompts.js";
 import { vadProcess } from '../process/vad.js';
-import fs from 'fs';
+import fs from 'fs/promises';
 
 export async function getSummaryFromRecords(userNames, resultFilePaths) {
     const allConversations = {};
@@ -65,9 +65,45 @@ export async function getSummaryFromRecords(userNames, resultFilePaths) {
     return meetingSummary;
 }
 
+export async function getSummaryFromTranscribedText(TranscribedPaths) {
+    try {
+        const fileContent = await fs.readFile(TranscribedPaths, 'utf-8');  // Corrected readFile usage
+        const allConversations = JSON.parse(fileContent);
+        const allTextConversations = JSON.stringify(allConversations);
 
-//test 
-const userNames = ['nathathai']
-const resultFilePaths = ['C:/Users/Nathathai/Documents/chula_XD/ErudiBot/ErudiBot-app-server/recordings/860527000616042536_20250318T163422.wav']
-const summary = await getSummaryFromRecords(userNames, resultFilePaths)
-console.log(summary)
+        // console.log("Transcribed Conversations:", allTextConversations);
+
+        // Correct transcription text
+        const correctTextPrompt = await correctTranscriptPrompt(allTextConversations);
+        const correctConversations = await chatGPTMessage(correctTextPrompt);
+
+        // console.log("Corrected Conversations:", correctConversations);
+
+        // Generate summary
+        const summaryTextPrompt = await summarizePrompt(correctConversations);
+        const meetingSummary = await chatGPTMessage(summaryTextPrompt);
+
+        console.log("Final Meeting Summary:", meetingSummary);
+        return meetingSummary;
+
+    } catch (error) {
+        console.error("Error reading the transcribed file:", error);
+        return "Error processing transcription.";
+    }
+}
+
+
+////test summary from record
+// const userNames = ['ItsRitte', 'NaThatHai', 'myo']
+// const resultFilePaths = ['C:/Users/Nathathai/Documents/chula_XD/ErudiBot/ErudiBot-app-server/recordings/198624703538003968_20250321T140113.wav',
+//                         'C:/Users/Nathathai/Documents/chula_XD/ErudiBot/ErudiBot-app-server/recordings/860527000616042536_20250321T140113.wav',
+//                         'C:/Users/Nathathai/Documents/chula_XD/ErudiBot/ErudiBot-app-server/recordings/363311465077145600_20250321T140113.wav'
+// ]
+// const summary = await getSummaryFromRecords(userNames, resultFilePaths)
+// console.log(summary)
+
+// //test summary from transcribed text (whisper)
+// const TranscribedPaths = './test_results/transcribed.json'
+// getSummaryFromTranscribedText(TranscribedPaths)
+//     .then(summary => console.log(summary))
+//     .catch(err => console.error(err));

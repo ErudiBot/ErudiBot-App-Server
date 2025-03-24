@@ -139,11 +139,11 @@ function deleteTempFile(filePath) {
 
 
 
-// Example usage:
-const absoluteWavFilePath = 'C:/Users/Nathathai/Documents/chula_XD/ErudiBot/ErudiBot-app-server/recordings/860527000616042536_20250319T044212.wav'
+// // Example usage:
+// const absoluteWavFilePath = 'C:/Users/Nathathai/Documents/chula_XD/ErudiBot/ErudiBot-app-server/recordings/860527000616042536_20250319T044212.wav'
 
 
-vadProcess(absoluteWavFilePath)
-    .then((result) => console.log(result))
-    .catch((error) => console.error("Error:", error));
+// vadProcess(absoluteWavFilePath)
+//     .then((result) => console.log(result))
+//     .catch((error) => console.error("Error:", error));
 

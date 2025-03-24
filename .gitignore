@@ -1,6 +1,5 @@
 .env
 node_modules
 install.txt
-test_results/
 recordings
 test_audios
