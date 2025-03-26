@@ -1,5 +1,4 @@
-(base) PS C:\Users\Nathathai\Documents\chula_XD\ErudiBot\ErudiBot-app-server> node .\process\after_stop-record.js
-Final Meeting Summary: **Meeting Summary:** การประชุมเกี่ยวกับระบบบ้านอัจฉริยะ
+**Meeting Summary:** การประชุมเกี่ยวกับระบบบ้านอัจฉริยะ
 
 **Meeting Topics**
 - การฟังงาน
@@ -33,4 +32,3 @@ Final Meeting Summary: **Meeting Summary:** การประชุมเกี
 
 **Brief Summary**
 การประชุมวันนี้พูดคุยเกี่ยวกับการพัฒนาระบบบ้านอัจฉริยะที่ใช้ AI และ IoT โดยมีการเน้นการวิเคราะห์ข้อมูลด้านพลังงานและให้คำแนะนำในการประหยัดพลังงาน รวมถึงการเลือกแนวทางที่ทุก                               กคนถนัดในการทำงานร่วมกัน.
-(base) PS C:\Users\Nathathai\Documents\chula_XD\ErudiBot\ErudiBot-app-server> 
