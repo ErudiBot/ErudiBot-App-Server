@@ -7,7 +7,7 @@ import { getSummaryFromRecords } from '../process/after_stop-record.js';
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('stop-record')
+        .setName('stop-to-summarize')
         .setDescription('Stops recording and disconnects the bot'),
     
     async execute(interaction) {
