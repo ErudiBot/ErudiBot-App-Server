@@ -1,0 +1,39 @@
+-
+  **task:** Research smart home technologies
+  **subtasks:**
+    -
+      **subtask_name:** Identify leading technologies
+      **assigned_to:** ItsRitte
+      **estimated_time_hours:** 3.5
+      **description:** Research current leading smart home technologies in the market.
+    -
+      **subtask_name:** Evaluate compatibility
+      **assigned_to:** myo
+      **estimated_time_hours:** 3.5
+      **description:** Check compatibility of identified technologies with existing systems.
+-
+  **task:** Develop project proposal
+  **subtasks:**
+    -
+      **subtask_name:** Draft proposal
+      **assigned_to:** myo
+      **estimated_time_hours:** 4.5
+      **description:** Prepare a proposal document outlining the project scope and objectives.
+    -
+      **subtask_name:** Review and feedback
+      **assigned_to:** ItsRitte
+      **estimated_time_hours:** 2.5
+      **description:** Circulate the proposal for feedback and revisions.
+-
+  **task:** Initiate prototype development
+  **subtasks:**
+    -
+      **subtask_name:** Design prototype
+      **assigned_to:** ItsRitte
+      **estimated_time_hours:** 5.5
+      **description:** Create initial designs and specifications for the prototype.
+    -
+      **subtask_name:** Select development tools
+      **assigned_to:** myo
+      **estimated_time_hours:** 4.5
+      **description:** Identify and select tools and platforms for prototype development.

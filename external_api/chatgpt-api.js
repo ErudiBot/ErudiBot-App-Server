@@ -48,6 +48,7 @@ export async function chatGPTMessageJson(text) {
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: conversation,
+            response_format: { "type": "json_object" }
         });
 
         const responseMessage = response.choices[0].message.content;

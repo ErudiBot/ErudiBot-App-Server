@@ -94,15 +94,20 @@ export async function taskAllocationPrompt(allTasksPlan, userNames, topicInteres
   
   Return the structured task allocation in JSON format with this structure:
   {
-      "task": "Task description",
-      "subtasks": [
-          {
-              "subtask_name": "Name of subtask",
-              "assigned_to": "Username",
-              "estimated_time_hours": X,
-              "description": "Description of subtask"
-          }
-      ]
+      "tasks": 
+            [
+              {
+                "task": "Task description",
+                "subtasks": [
+                    {
+                        "subtask_name": "Name of subtask",
+                        "assigned_to": "Username",
+                        "estimated_time_hours": X,
+                        "description": "Description of subtask"
+                    }
+                  ]
+              }
+            ]
   }
   
   Now allocate the following tasks based on the participants: 

@@ -92,6 +92,9 @@ export async function getSummaryFromTranscribedText(transcribedPaths) {
 export async function getTaskAllocationFromSummary(meetingSummary, userNames){
     try{
         const meetingSummaryJson = await getMessageFromJsonResponse(meetingSummary);
+        if (!meetingSummaryJson || !meetingSummaryJson["topic_interest"] || !meetingSummaryJson["task_list"]) {
+            throw new Error("Invalid meeting summary format.");
+        }
         const topicInterest = meetingSummaryJson["topic_interest"]
         console.log("topic interest:")
         console.log(topicInterest)
@@ -110,6 +113,10 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
         console.log("All task plan: ")
         console.log(allTasksPlan);
 
+        if (allTasksPlan.length === 0) {
+            throw new Error("No tasks planned. Task list may be empty or processing failed.");
+        }
+
         //5. Prompt GPT for Task Allocation
         const taskAllocationTextPrompt = await taskAllocationPrompt(allTasksPlan, userNames, topicInterest);
         const taskAllocation = await chatGPTMessageJson(taskAllocationTextPrompt);
@@ -122,17 +129,19 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
         let isGood = cv <= 20;
         console.log("is good");
         console.log(isGood)
+        let reflectionResult = taskAllocation;
 
         while(isGood !== true){
             let reflecTaskAllocationTextPrompt = await reflectionPatternPrompt(taskAllocationJson, cv)
-            let reflectionResult = await chatGPTMessageJson(reflecTaskAllocationTextPrompt)
+            reflectionResult = await chatGPTMessageJson(reflecTaskAllocationTextPrompt)
             taskAllocationJson = await getMessageFromJsonResponse(reflectionResult);
             cv = await CVDistributed(taskAllocationJson)
             isGood = cv <= 20;
             break; //i just break to see if the logic work. remove this for further development.
         }
+        const taskAllocationResult = await jsonToMarkdown(reflectionResult)
 
-        return taskAllocationJson;
+        return taskAllocationResult;
     } catch (error) {
         console.error("Error: ", error);
         return "Error processing task allocation.";
