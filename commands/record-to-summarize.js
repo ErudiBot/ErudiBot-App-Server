@@ -7,7 +7,7 @@ export const recordings = {};
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('record-to-summary')
+        .setName('record-to-summarize')
         .setDescription('Records audio from the voice channel'),
 
     async execute(interaction) {

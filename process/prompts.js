@@ -7,7 +7,17 @@ export async function correctTranscriptPrompt(conversations){
    spelling, and clarity. Ensure that the text is concise and well-structured, with any unclear or ambiguous sections reworded for better understanding. 
    Also, highlight and correct any inconsistencies, redundancies, or misplaced information. The text should be easy to read, maintain its original meaning, 
    and be suitable for formal documentation. Please provide the corrected text in Thai. Review your summary and make sure it include only Thai (some english words is allow).
-   You should correct only the value of "text" and output in the same JSOn format as input`
+   You should correct the conversations and output in the JSON format 
+   This is an example of how you should output:
+    {
+      correct_conversations:[
+          { "speaker_name": "user name here", "text": "Corrected speech here" },
+          { "speaker_name": "user name here", "text": "Corrected speech here" }
+          ...
+      ]
+    }`
+   //You should correct only the value of "text" and output in the same JSON format as input`
+   
 
    return prompt + "\n" + conversations;
   
@@ -35,7 +45,11 @@ export async function summarizePrompt(conversations) {
           { "person": "Person 2", "interest": "Topic of interest" }
       ]
   }
-
+  Notes:
+  - The task_list must include tasks discussed during the meeting. If there are next steps, suggest them clearly.
+  - If no tasks are found, suggest possible tasks or advise the user to review their planning.
+  - Keep all names exactly as used in the conversation
+  
   Now summarize the following conversation and return the JSON output:\n${conversations}`;
 }
 

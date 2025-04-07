@@ -68,12 +68,13 @@ export async function getSummaryFromRecords(userNames, resultFilePaths) {
 export async function getSummaryFromTranscribedText(transcribedPaths) {
     try {
         const fileContent = await fs.readFile(transcribedPaths, 'utf-8');  // Corrected readFile usage
-        const allConversations = JSON.parse(fileContent);
-        const allTextConversations = JSON.stringify(allConversations);
-        // console.log("Transcribed Conversations:", allTextConversations);
+        const allConversationsJson = JSON.parse(fileContent);
+
+        const allConverastionsText = await TranscribedConversationJsonToText(allConversationsJson)
+        console.log(allConverastionsText);
 
         //1. Correct transcription text
-        const correctTextPrompt = await correctTranscriptPrompt(allTextConversations);
+        const correctTextPrompt = await correctTranscriptPrompt(allConverastionsText);
         const correctConversations = await chatGPTMessageJson(correctTextPrompt);
         console.log("Corrected Conversations:", correctConversations);
 
@@ -229,6 +230,15 @@ function CVDistributed(taskAllocationJson) {
     const cv = (stdDev / mean) * 100;
 
     return cv 
+}
+
+async function TranscribedConversationJsonToText(jsonConversation){
+
+    const result = Object.entries(jsonConversation)
+        .sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]))
+        .map(([_, [speaker, data]]) => `${speaker}: ${data.text}`)
+        .join('\n');
+    return result;
 }
 
 
