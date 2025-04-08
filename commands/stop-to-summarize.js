@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import { getVoiceConnection } from '@discordjs/voice';
 import fs from 'fs';
 import { exec } from 'child_process';
-import { recordings } from './record.js';
+import { recordings } from './record-to-summarize.js';
 import { getSummaryFromRecords } from '../process/after_stop-record.js';
 
 export default {

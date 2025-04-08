@@ -65,7 +65,29 @@ export async function getSummaryFromRecords(userNames, resultFilePaths) {
     return meetingSummary;
 }
 
-export async function getSummaryFromTranscribedText(transcribedPaths) {
+export async function getSummaryFromTranscribed(allConversationsJson) {
+    try {
+        const allConverastionsText = await TranscribedConversationJsonToText(allConversationsJson)
+
+        //1. Correct transcription text
+        const correctTextPrompt = await correctTranscriptPrompt(allConverastionsText);
+        const correctConversations = await chatGPTMessageJson(correctTextPrompt);
+        const correctConversationsJson = await getMessageFromJsonResponse(correctConversations)
+
+        //2. GPT Prompt For Summary + Topic Interest
+        const summaryTextPrompt = await summarizePrompt(correctConversationsJson);
+        const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
+        const meetingSummaryMarkdown = await jsonToMarkdown(meetingSummary)
+
+        return meetingSummaryMarkdown;
+
+    } catch (error) {
+        console.error("Error in getSummaryFromTranscribedText:", error);
+        return "Error processing transcription.";
+    }
+}
+
+export async function getSummaryFromTranscribedTextPath(transcribedPaths) {
     try {
         const fileContent = await fs.readFile(transcribedPaths, 'utf-8');  // Corrected readFile usage
         const allConversationsJson = JSON.parse(fileContent);
@@ -172,22 +194,20 @@ export async function getMessageFromJsonResponse(jsonResponseText) {
 
 export async function jsonToMarkdown(jsonResponseText) {
     const data = await getMessageFromJsonResponse(jsonResponseText);
-    // console.log("message: ");
-    // console.log(data);
 
     function formatValue(value, indent = "") {
         if (Array.isArray(value)) {
             return value.map(item => `\n${indent}- ${typeof item === 'object' ? formatValue(item, indent + "  ") : item}`).join("");
         } else if (typeof value === 'object' && value !== null) {
             return Object.entries(value)
-                .map(([subKey, subValue]) => `\n${indent}**${subKey}:** ${formatValue(subValue, indent + "  ")}`)
+                .map(([subKey, subValue]) => `\n${indent}**${subKey.replace(/_/g, " ")}:** ${formatValue(subValue, indent + "  ")}`)
                 .join("");
         }
         return value;
     }
 
     return Object.entries(data)
-        .map(([key, value]) => `# ${key}\n${formatValue(value)}`)
+        .map(([key, value]) => `# ${key.replace(/_/g, " ")}\n${formatValue(value)}`) //replace _ with spacepar
         .join("\n\n");
 }
 
@@ -256,7 +276,7 @@ async function TranscribedConversationJsonToText(jsonConversation){
 // //----------------test only summary from transcribed text (whisper)----------------------------
 // const transcribedPaths = './test_results/transcribed.json';
 // try {
-//     const meetingSummary = await getSummaryFromTranscribedText(transcribedPaths);
+//     const meetingSummary = await getSummaryFromTranscribedTextPath(transcribedPaths);
 //     // console.log(meetingSummary);
 
 //     const meetingSummaryMarkdown = await jsonToMarkdown(meetingSummary);
@@ -266,15 +286,15 @@ async function TranscribedConversationJsonToText(jsonConversation){
 // }
 
 //---------------test both summarize and task allocation function------------- (didn't test this yet. if bug just stay patient)
-try {
-    const transcribedPaths = './test_results/transcribed.json';
-    const userNames = ['ItsRitte', 'NaThatHai', 'myo'];
-    const meetingSummary = await getSummaryFromTranscribedText(transcribedPaths);
-    const taskAllocation = await getTaskAllocationFromSummary(meetingSummary, userNames);
-    console.log(taskAllocation);
-} catch (err) {
-    console.error(err);
-}
+// try {
+//     const transcribedPaths = './test_results/transcribed.json';
+//     const userNames = ['ItsRitte', 'NaThatHai', 'myo'];
+//     const meetingSummary = await getSummaryFromTranscribedTextPath(transcribedPaths);
+//     const taskAllocation = await getTaskAllocationFromSummary(meetingSummary, userNames);
+//     console.log(taskAllocation);
+// } catch (err) {
+//     console.error(err);
+// }
 
 //--------------example of how to use readTextFile function ------------------------
 
