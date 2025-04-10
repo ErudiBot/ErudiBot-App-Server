@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { ApplicationCommandPermissionType, Client, Collection, GatewayIntentBits, IntentsBitField, REST, Routes } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
+import { chatGPTMessage } from './external_api/chatgpt-api.js';
 
 const client = new Client({
     intents: [
@@ -105,5 +106,40 @@ client.on('interactionCreate', async (interaction) => {
     } catch (error) {
         console.error('Error executing command:', error);
         await interaction.reply({ content: 'There was an error executing that command.', ephemeral: true });
+    }
+});
+
+
+//app -> gpt-reply
+client.on('interactionCreate', async interaction => {
+    if (interaction.isModalSubmit()) {
+        if (interaction.customId.startsWith('gpt_modal_')) {
+            const followUp = interaction.fields.getTextInputValue('follow_up');
+            const originalMessage = interaction.client.cachedMessages?.get(interaction.customId);
+
+            if (!originalMessage) {
+                return await interaction.reply({
+                    content: '❌ Could not retrieve the original message.',
+                    ephemeral: true,
+                });
+            }
+
+            await interaction.deferReply();
+
+            try {
+                // Call the chatGPTMessage function with both original message and follow-up
+                const gptResponse = await chatGPTMessage(`Original message: "${originalMessage}" Follow-up question: "${followUp}"`);
+
+                // Send response from GPT-4 in chunks if too long
+                const chunkSize = 2000;
+                for (let i = 0; i < gptResponse.length; i += chunkSize) {
+                    const chunk = gptResponse.substring(i, i + chunkSize);
+                    await interaction.followUp({ content: chunk });
+                }
+            } catch (error) {
+                console.error('Error during GPT call:', error);
+                await interaction.followUp('⚠️ Something went wrong while communicating with GPT.');
+            }
+        }
     }
 });

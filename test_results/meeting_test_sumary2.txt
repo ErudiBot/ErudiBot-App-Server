@@ -1,0 +1,25 @@
+# meeting summary
+ประชุมเกี่ยวกับการพัฒนาระบบบ้านอัจฉริยะที่ใช้ AI สำหรับการวิเคราะห์การใช้พลังงาน
+
+# topics
+-
+  **main topic:** ระบบบ้านอัจฉริยะ
+  **subtopics:**
+    -
+      **name:** การใช้ AI และ IoT
+      **details:** การพัฒนาระบบบ้านอัจฉริยะที่ช่วยในการวิเคราะห์การใช้พลังงานและให้คำแนะนำสำหรับการประหยัดพลังงาน
+
+# task list
+-
+  **task:** พัฒนาระบบบ้านอัจฉริยะที่ใช้ AI
+  **responsible:** Unspecified
+
+# topic interest
+-
+  **speaker name:** ItsRitte
+  **interest:** IoT และระบบบ้านอัจฉริยะ
+
+# participants
+- ItsRitte
+- NaThatHai
+- myo

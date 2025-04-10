@@ -3,7 +3,7 @@ import { getVoiceConnection } from '@discordjs/voice';
 import fs from 'fs';
 import { exec } from 'child_process';
 import { recordings } from './record-to-summarize.js';
-import { getSummaryFromRecords } from '../process/after_stop-record.js';
+import { getSummaryFromRecords } from '../process/summary_task-allocation.js';
 
 export default {
     data: new SlashCommandBuilder()

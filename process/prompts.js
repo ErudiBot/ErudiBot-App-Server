@@ -3,7 +3,7 @@
 
 //1. GPT Prompt For Correct Conversation
 export async function correctTranscriptPrompt(conversations){
-  const prompt = `As a Discord Bot for Assistant, please review the following meeting transcript and correct any errors in grammar, punctuation,
+  return `As a Discord Bot for Assistant, please review the following meeting transcript and correct any errors in grammar, punctuation,
    spelling, and clarity. Ensure that the text is concise and well-structured, with any unclear or ambiguous sections reworded for better understanding. 
    Also, highlight and correct any inconsistencies, redundancies, or misplaced information. The text should be easy to read, maintain its original meaning, 
    and be suitable for formal documentation. Please provide the corrected text in Thai. Review your summary and make sure it include only Thai (some english words is allow).
@@ -15,12 +15,8 @@ export async function correctTranscriptPrompt(conversations){
           { "speaker_name": "user name here", "text": "Corrected speech here" }
           ...
       ]
-    }`
-   //You should correct only the value of "text" and output in the same JSON format as input`
-   
-
-   return prompt + "\n" + conversations;
-  
+    }
+    Now correct the following conversation and return the JSON output:\n${conversations}`;
 }
 
 // 2. GPT Prompt For Summary + Topic Interest
@@ -41,14 +37,15 @@ export async function summarizePrompt(conversations) {
           { "task": "Task description", "responsible": "Person or Unspecified" }
       ],
       "topic_interest": [
-          { "person": "Person 1", "interest": "Topic of interest" },
-          { "person": "Person 2", "interest": "Topic of interest" }
+          { "speaker_name": "user name here", "interest": "Topic of interest" },
+          { "speaker_name": "user name here", "interest": "Topic of interest" }
       ]
   }
   Notes:
+  - Try to guess the meeting topic and subtopic from the conversations.
   - The task_list must include tasks discussed during the meeting. If there are next steps, suggest them clearly.
   - If no tasks are found, suggest possible tasks or advise the user to review their planning.
-  - Keep all names exactly as used in the conversation
+  - Keep all names exactly as used in the conversation (speaker_name). If other people were mentioned, list their name and topic interest. 
   
   Now summarize the following conversation and return the JSON output:\n${conversations}`;
 }
