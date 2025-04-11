@@ -6,7 +6,7 @@ export async function correctTranscriptPrompt(conversations){
   return `As a Discord Bot for Assistant, please review the following meeting transcript and correct any errors in grammar, punctuation,
    spelling, and clarity. Ensure that the text is concise and well-structured, with any unclear or ambiguous sections reworded for better understanding. 
    Also, highlight and correct any inconsistencies, redundancies, or misplaced information. The text should be easy to read, maintain its original meaning, 
-   and be suitable for formal documentation. Please provide the corrected text in Thai. Review your summary and make sure it include only Thai (some english words is allow).
+   and be suitable for formal documentation. Please provide the corrected text in Thai. Review your summary and make sure it include only Thai (some english words are allowed).
    You should correct the conversations and output in the JSON format 
    This is an example of how you should output:
     {
@@ -20,7 +20,7 @@ export async function correctTranscriptPrompt(conversations){
 }
 
 // 2. GPT Prompt For Summary + Topic Interest
-export async function summarizePrompt(conversations) {
+export async function summarizePrompt(conversations, userNames) {
   return `You are a Discord bot summarizing meetings. Ensure all output is in Thai. Return the structured summary in JSON format with this structure:  
 {
   "meeting_summary": "A detailed overall summary of the meeting (must cover everything discussed, agreed upon, and mention the next meeting if scheduled)",
@@ -45,9 +45,10 @@ Note:
 2.Try to infer the "main topics" and "subtopics" based on the conversation.
 3.task_list must include the tasks discussed and assigned during the meeting.
 4.If no specific tasks were mentioned, suggest possible tasks or advise the user to review the meeting plan.
-5.Keep all speaker names exactly as mentioned in the conversation.
-6.If other people were mentioned during the meeting, record their topic of interest in the topic_interest section.
+5.Keep all names exactly as used in the conversation (speaker_name) ${userNames}. If other people were mentioned, ignore them.
+6.If other people were mentioned during the meeting, ignore them.
 7.If a next meeting or follow-up is mentioned, it must be included in the meeting_summary.
+
 
 Additional Rules:
 1.The meeting summary must be long, detailed, and comprehensive, covering points discussed, agreements made, and next meeting arrangements if applicable.
