@@ -15,7 +15,7 @@ export default {
         if (!connection) {
             return interaction.reply("I'm not in a voice channel!");
         }
-
+        
         // Close all recording streams properly 
         const userNames = [];
         const resultFilePaths = [];

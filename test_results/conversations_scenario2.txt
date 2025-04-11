@@ -1,0 +1,180 @@
+Step 1 :Correct Conversation --------------------------------------------------------------------
+{
+  correct_conversations: [
+    { speaker_name: 'itsritte', text: 'วันนี้เริ่มแล้วนะครับ' },
+    { speaker_name: 'itsritte', text: 'โอเค มีอันหนึ่ง หามาอันหนึ่ง' },
+    { speaker_name: 'itsritte', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'itsritte', text: 'อืม' },
+    { speaker_name: 'itsritte', text: 'เย่' },
+    {
+      speaker_name: 'itsritte',
+      text: 'ผมก็ราชุดแผนอินไหว ใช่มั้ย? มีตึกทะลม แล้วเหมือนกับเอาไม่เอาแผนอินไหวดีกว่า ถ้าผมเดินๆ อยู่แล้วเจอคนหนึ่งที่เป็นหวัด มันลม ทำตัวไม่ถูก เอาเป็นว่าเราต้องขอความช่วยเหลือ'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'ที่ตู้เสนอว่าเราจะทำยังไงให้เราสามารถส่งคนที่รู้วิธีการในการรับมือกับปัญหาตลอดปัญหาได้ เพราะว่าเอาจริงๆ นะ ถ้ามันเกิดปัญหา                         ามาก่อน ตำรวจก็จะมาช้า'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'เราต้องทำแพลตฟอร์มที่คนสามารถช่วยเหลือกันได้ ถ้ามีใครเกิดเหตุการณ์แบบเป็นลม คนชักดิน ก็กดแอปแล้ว ไปช่วยเขาได้ถ้าเขาอยู่ใกล                      ล้ๆ'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'เราจริงๆ คิดว่าน่าจะช่วยเรื่อง Sustainable City and Community นะ'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'แล้วก็คิดว่ามีแอปให้ขอความช่วยเหลือ แล้วเราสามารถรับมือกับเหตุการณ์ได้'
+    },
+    { speaker_name: 'itsritte', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'itsritte', text: 'โน้ท' },
+    { speaker_name: 'itsritte', text: 'อืม' },
+    {
+      speaker_name: 'itsritte',
+      text: 'ก็คือเราจะเลือกอันเดียวมาทำต่อในสัปดาห์หน้าใช่ป่ะ?'
+    },
+    { speaker_name: 'itsritte', text: 'โปรดติดตามตอนต่อไป' },
+    {
+      speaker_name: 'itsritte',
+      text: 'มันเกี่ยวกับการหลอกโลกหรืออะไรอย่างนี้ป่ะ?'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'อืม คิดว่าดีกว่า ถ้าทำปลวกป่า เราจะให้คนให้เงินตอบแทน คิดว่ามีแนวทางในการซื้อ Carbon Credit หรือเปล่า?'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'คิดว่าได้ แต่ตอนนี้ยังไม่ถึงเวลาในอนาคตมันมีแนวทาง'
+    },
+    { speaker_name: 'itsritte', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'itsritte', text: 'ขอบคุณทุกคน' },
+    {
+      speaker_name: 'itsritte',
+      text: 'คิดว่ามีแอปที่เกี่ยวข้องในการช่วยแบบนี้'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'อืม เขาต้องติดต่อพันธมิตร หรือผู้ค้าที่เขาสนใจในแอปนี้'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'เราควรสอบถามประเทศที่มีการปลูกป่า และไปสอบถามดู'
+    },
+    { speaker_name: 'itsritte', text: 'โปรดติดตามตอนต่อไป' },
+    {
+      speaker_name: 'itsritte',
+      text: 'อาจจะมีแบบรับเควสหรือว่าติดต่อกับเพื่อนที่ทำกิจกรรมเกี่ยวกับปลูกป่า'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'ไปถามอาจารย์ที่โรงเรียนเกี่ยวกับการปลูกป่าชายเลน'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'เดินไปถามดูว่าเขาสนใจมั้ย เพราะว่าเรายังกังวลเรื่องการทำทุน'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'ได้ เดี๋ยวจะลองติดต่อพวกอุตสาหกรรมที่มีแนวโน้มในการสำรวจ'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'ปี 2030 ก็ยังไม่มีการผลิตที่ปล่อย Carbon footprint เยอะ และสนใจที่จะให้ทุนในแอปนี้ไหม?'
+    },
+    {
+      speaker_name: 'itsritte',
+      text: 'ได้ แต่สัปดาห์หน้าเราไม่ว่าง จะติดประชุม'
+    },
+    { speaker_name: 'nathathai', text: 'โปรดติดตามตอนต่อไป' },
+    {
+      speaker_name: 'nathathai',
+      text: 'ได้ไอดีอะไรกันบ้าง เอามาทันก่อนก็ดี'
+    },
+    { speaker_name: 'nathathai', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'nathathai', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'nathathai', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'nathathai', text: 'อือฮื่อ บ๊ายบาย' },
+    {
+      speaker_name: 'nathathai',
+      text: 'คือมันเตือนให้คนลบรอบรู้ใช่ไหม?'
+    },
+    {
+      speaker_name: 'nathathai',
+      text: 'น่าสนใจ อาจจะคล้ายๆ ของกู แต่คนกูจะจัดการขยะด้วย'
+    },
+    {
+      speaker_name: 'nathathai',
+      text: 'ควรมีแอปสำหรับขยะรีไซเคิล ที่มีฟังก์ชัน AI ตรวจสอบรูป'
+    },
+    {
+      speaker_name: 'nathathai',
+      text: 'ส่งเสริมการบริโภคและการผลิตที่มีความรับผิดชอบ'
+    },
+    {
+      speaker_name: 'nathathai',
+      text: 'ก็ต้องดูข้อมูลการปล่อยก๊าซในบรรยากาศ'
+    },
+    { speaker_name: 'nathathai', text: 'ต้องเลือกไอเดียใช่มั้ย?' },
+    { speaker_name: 'nathathai', text: 'หรือจะให้ได้เงินให้ด้วย' },
+    { speaker_name: 'nathathai', text: 'จะสนับสนุนหรือไม่?' },
+    { speaker_name: 'nathathai', text: 'อืม โอเค' },
+    { speaker_name: 'nathathai', text: 'โปรดติดตามตอนต่อไป' },
+    {
+      speaker_name: 'nathathai',
+      text: 'ไม่แน่ใจว่ามีใครเป็นยังไง อาจจะต้องไปดูเพิ่มอีกที'
+    },
+    { speaker_name: 'nathathai', text: 'คุณคิดว่าไอเดียดีหรือเปล่า?' },
+    {
+      speaker_name: 'nathathai',
+      text: 'อาจจะขายโกนสั่นล่ะ เพื่อหาตังค์ในแอป'
+    },
+    { speaker_name: 'nathathai', text: 'มีแบบแจ้งเตือนโดยใช้โลเกชัน' },
+    { speaker_name: 'nathathai', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'nathathai', text: 'กำลังอาจจะมีคนเกรียนในแอป' },
+    {
+      speaker_name: 'nathathai',
+      text: 'คนต้องไปก่อนถึงจะรู้ว่าไปจริงหรือเปล่า?'
+    },
+    {
+      speaker_name: 'nathathai',
+      text: 'คิดว่ามันยากหน่อย แต่ไม่เป็นไร'
+    },
+    { speaker_name: 'nathathai', text: 'ขอบคุณที่รับชอบครามบอกกัน' },
+    { speaker_name: 'nathathai', text: 'ทำอะไรบ้าง?' },
+    {
+      speaker_name: 'nathathai',
+      text: 'หรือว่าจะลองติดต่อบริษัทสปอนเซอร์'
+    },
+    {
+      speaker_name: 'myo.tn',
+      text: 'โอเค มาเข้าสู่การประชุมครั้งที่สองนะครับ สวัสดีครับ'
+    },
+    { speaker_name: 'myo.tn', text: 'พอมีอะไรไหมครับ?' },
+    {
+      speaker_name: 'myo.tn',
+      text: 'คือไอเดียจะเป็นแอปที่คล้าย ๆ กับเก็บขยะ'
+    },
+    {
+      speaker_name: 'myo.tn',
+      text: 'เป็นแอปที่เปิดให้คนทั่วไปสามารถลงทะเบียนกิจกรรม'
+    },
+    {
+      speaker_name: 'myo.tn',
+      text: 'ไปทิ้งขยะแล้วบริจาคเงิน ได้รับเครดิตหรือของรางวัลแทน'
+    },
+    { speaker_name: 'myo.tn', text: 'เป็นแอปที่ให้คนทำกิจกรรม' },
+    { speaker_name: 'myo.tn', text: 'ใครมีคำถามไหมครับ?' },
+    { speaker_name: 'myo.tn', text: 'โปรดติดตามตอนต่อไป' },
+    { speaker_name: 'myo.tn', text: 'จะเป็นแอปฉุกเฉินใช่ไหม?' },
+    { speaker_name: 'myo.tn', text: 'มีอุปกรณ์จำเป็น' },
+    { speaker_name: 'myo.tn', text: 'ไปถ่ายคอมเก่า' },
+    { speaker_name: 'myo.tn', text: 'เราจะเลือกอันเดียวทำต่อ' },
+    { speaker_name: 'myo.tn', text: 'ถามก่อนใครมีอะไรถามไหม?' },
+    {
+      speaker_name: 'myo.tn',
+      text: 'เราต้องทำ Climate Action จัดทำให้ได้'
+    },
+    { speaker_name: 'myo.tn', text: 'เราต้องมีไอเดียหลายอย่าง' },
+    { speaker_name: 'myo.tn', text: 'ขอบคุณมาก' }
+  ]
+}
