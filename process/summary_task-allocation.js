@@ -66,7 +66,7 @@ export async function getSummaryFromTranscribed(allConversationsJson, userNames)
         console.log(correctConversationsJson)
 
         //2. GPT Prompt For Summary + Topic Interest
-        const summaryTextPrompt = await summarizePrompt(correctConversations);
+        const summaryTextPrompt = await summarizePrompt(correctConversations, userNames);
         const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
         //2.2. Add user names to response
         const meetingSummaryMarkdown = await Helper.jsonToMarkdownAddUsernames(meetingSummary, userNames);
@@ -100,7 +100,7 @@ export async function getSummaryFromCorrectTranscribedTextPath(Correctedtranscri
         const correctConversations = Helper.readTextFile(CorrectedtranscribedPaths);
 
         //2. GPT Prompt For Summary + Topic Interest
-        const summaryTextPrompt = await summarizePrompt(correctConversations);
+        const summaryTextPrompt = await summarizePrompt(correctConversations, userNames);
         const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
         //2.2. Add user names to response
         const meetingSummaryMarkdown = await Helper.jsonToMarkdownAddUsernames(meetingSummary, userNames);
