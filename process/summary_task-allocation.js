@@ -94,6 +94,25 @@ export async function getSummaryFromTranscribedTextPath(transcribedPaths, userNa
     }
 }
 
+//used for test and debug
+export async function getSummaryFromCorrectTranscribedTextPath(CorrectedtranscribedPaths, userNames) {
+    try {
+        const correctConversations = Helper.readTextFile(CorrectedtranscribedPaths);
+
+        //2. GPT Prompt For Summary + Topic Interest
+        const summaryTextPrompt = await summarizePrompt(correctConversations);
+        const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
+        //2.2. Add user names to response
+        const meetingSummaryMarkdown = await Helper.jsonToMarkdownAddUsernames(meetingSummary, userNames);
+        console.log("Step 2 :Summarize Meeting --------------------------------------------------------------------")
+        return meetingSummaryMarkdown;
+
+    } catch (error) {
+        console.error("Error in getSummaryFromTranscribedText:", error);
+        return "Error processing transcription.";
+    }
+}
+
 export async function getTaskAllocationFromSummary(meetingSummary, userNames){
     try{
         const meetingSummaryJson = await Helper.getMessageFromJsonResponse(meetingSummary);

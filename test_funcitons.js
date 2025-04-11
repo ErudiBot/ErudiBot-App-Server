@@ -1,6 +1,7 @@
 import { getSummaryFromRecords,
         getSummaryFromTranscribedTextPath,
         getTaskAllocationFromSummary,
+        getSummaryFromCorrectTranscribedTextPath
  } from "./process/summary_task-allocation.js"
 import * as Helper from "./process/helper.js"
 
@@ -22,6 +23,16 @@ import * as Helper from "./process/helper.js"
 // } catch (err) {
 //     console.error(err);
 // }
+
+//-----------------test corrected transcribed conversation-----------------------------------------
+const correctedtranscribedPaths = './test_results/conversations_scenario2.txt';
+const userNames = [ 'ItsRitte', 'NaThatHai', 'myo' ]
+try {
+    const meetingSummaryMarkdown = await getSummaryFromCorrectTranscribedTextPath(correctedtranscribedPaths, userNames);
+    console.log(meetingSummaryMarkdown)
+} catch (err) {
+    console.error(err);
+}
 
 // // ---------------test both summarize and task allocation function------------- (didn't test this yet. if bug just stay patient)
 // try {
