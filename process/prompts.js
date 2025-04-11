@@ -22,31 +22,39 @@ export async function correctTranscriptPrompt(conversations){
 // 2. GPT Prompt For Summary + Topic Interest
 export async function summarizePrompt(conversations) {
   return `You are a Discord bot summarizing meetings. Ensure all output is in Thai. Return the structured summary in JSON format with this structure:  
-
-  {
-      "meeting_summary": "Short summary of the meeting",
-      "topics": [
-          {
-              "main_topic": "Main topic name",
-              "subtopics": [
-                  { "name": "Subtopic name", "details": "Key discussion points" }
-              ]
-          }
-      ],
-      "task_list": [
-          { "task": "Task description", "responsible": "Person or Unspecified" }
-      ],
-      "topic_interest": [
-          { "speaker_name": "user name here", "interest": "Topic of interest" },
-          { "speaker_name": "user name here", "interest": "Topic of interest" }
+{
+  "meeting_summary": "A detailed overall summary of the meeting (must cover everything discussed, agreed upon, and mention the next meeting if scheduled)",
+  "topics": [
+    {
+      "main_topic": "Main topic",
+      "subtopics": [
+        { "name": "Subtopic", "details": "Important points discussed" }
       ]
-  }
-  Notes:
-  - Try to guess the meeting topic and subtopic from the conversations.
-  - The task_list must include tasks discussed during the meeting. If there are next steps, suggest them clearly.
-  - If no tasks are found, suggest possible tasks or advise the user to review their planning.
-  - Keep all names exactly as used in the conversation (speaker_name). If other people were mentioned, list their name and topic interest. 
-  
+    }
+  ],
+  "task_list": [
+    { "task": "Details of the task that needs to be done", "responsible": "Responsible person's name or 'ไม่ระบุ' (not specified)" }
+  ],
+  "topic_interest": [
+    { "speaker_name": "Speaker's name", "interest": "Topic of interest" }
+  ]
+}
+
+Note:
+1.All output must be written in Thai language.
+2.Try to infer the "main topics" and "subtopics" based on the conversation.
+3.task_list must include the tasks discussed and assigned during the meeting.
+4.If no specific tasks were mentioned, suggest possible tasks or advise the user to review the meeting plan.
+5.Keep all speaker names exactly as mentioned in the conversation.
+6.If other people were mentioned during the meeting, record their topic of interest in the topic_interest section.
+7.If a next meeting or follow-up is mentioned, it must be included in the meeting_summary.
+
+Additional Rules:
+1.The meeting summary must be long, detailed, and comprehensive, covering points discussed, agreements made, and next meeting arrangements if applicable.
+2.Do not separate the next meeting into a different field; it must be part of the meeting_summary.
+3.Always return the summary in the given JSON structure — no additional text or formats.
+4.Avoid vague or generic summaries like "General discussions."
+
   Now summarize the following conversation and return the JSON output:\n${conversations}`;
 }
 
