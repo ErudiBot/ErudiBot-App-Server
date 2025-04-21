@@ -25,25 +25,26 @@ import * as Helper from "./process/helper.js"
 // }
 
 //-----------------test corrected transcribed conversation-----------------------------------------
-const correctedtranscribedPaths = './test_results/conversations_scenario2.txt';
-const userNames = [ 'ItsRitte', 'NaThatHai', 'myo' ]
-try {
-    const meetingSummaryMarkdown = await getSummaryFromCorrectTranscribedTextPath(correctedtranscribedPaths, userNames);
-    console.log(meetingSummaryMarkdown)
-} catch (err) {
-    console.error(err);
-}
-
-// // ---------------test both summarize and task allocation function------------- (didn't test this yet. if bug just stay patient)
+// const correctedtranscribedPaths = './test_results/iotTestTranscribedText.txt';
+// const userNames = [ 'ItsRitte', 'NaThatHai', 'myo' ]
 // try {
-//     const transcribedPaths = './test_results/transcribed.json';
-//     const userNames = ['ItsRitte', 'NaThatHai', 'myo'];
-//     const meetingSummary = await getSummaryFromTranscribedTextPath(transcribedPaths);
-//     const taskAllocation = await getTaskAllocationFromSummary(meetingSummary, userNames);
-//     console.log(taskAllocation);
+//     const meetingSummaryMarkdown = await getSummaryFromCorrectTranscribedTextPath(correctedtranscribedPaths, userNames);
+//     console.log(meetingSummaryMarkdown)
 // } catch (err) {
 //     console.error(err);
 // }
+
+// // ---------------test both summarize and task allocation function------------- (didn't test this yet. if bug just stay patient)
+try {
+    const transcribedPaths = './test_results/transcribed.json';
+    const userNames = ['ItsRitte', 'NaThatHai', 'myo'];
+    const meetingSummary = await getSummaryFromTranscribedTextPath(transcribedPaths, userNames);
+    console.log(meetingSummary)
+    const taskAllocation = await getTaskAllocationFromSummary(meetingSummary, userNames);
+    console.log(taskAllocation);
+} catch (err) {
+    console.error(err);
+}
 
 // // --------------example of how to use readTextFile function ------------------------
 

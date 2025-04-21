@@ -1,6 +1,6 @@
 import { transcribeAudio } from "../external_api/whisper_api.js";
-import { chatGPTMessage, chatGPTMessageJson } from "../external_api/chatgpt-api.js";
-import { correctTranscriptPrompt, summarizePrompt, taskPlanningPrompt, singleTaskAgentPrompt, taskAllocationPrompt, reflectionPatternPrompt} from "./prompts.js";
+import { chatGPTMessageJson } from "../external_api/chatgpt-api.js";
+import { correctTranscriptPrompt, summarizePrompt, taskPlanningPrompt, taskAllocationPrompt, reflectionPatternPrompt} from "./prompts.js";
 import { vadProcess } from './vad.js';
 import fs from 'fs/promises';
 import * as Helper from './helper.js'
@@ -60,7 +60,7 @@ export async function getSummaryFromTranscribed(allConversationsJson, userNames)
         //1. Correct transcription text
         const correctTextPrompt = await correctTranscriptPrompt(allConverastionsText);
         const correctConversations = await chatGPTMessageJson(correctTextPrompt);
-        
+
         const correctConversationsJson = await Helper.getMessageFromJsonResponse(correctConversations)
         console.log("Step 1 :Correct Conversation --------------------------------------------------------------------")
         console.log(correctConversationsJson)
@@ -115,7 +115,8 @@ export async function getSummaryFromCorrectTranscribedTextPath(Correctedtranscri
 
 export async function getTaskAllocationFromSummary(meetingSummary, userNames){
     try{
-        const meetingSummaryJson = await Helper.getMessageFromJsonResponse(meetingSummary);
+        const meetingSummaryJsonSring = await Helper.markdownToJson(meetingSummary)
+        const meetingSummaryJson = JSON.parse(meetingSummaryJsonSring)
         if (!meetingSummaryJson || !meetingSummaryJson["topic_interest"] || !meetingSummaryJson["task_list"]) {
             throw new Error("Invalid meeting summary format.");
         }
@@ -141,11 +142,11 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
             throw new Error("No tasks planned. Task list may be empty or processing failed.");
         }
 
-        //5. Prompt GPT for Task Allocation
         const taskAllocationTextPrompt = await taskAllocationPrompt(allTasksPlan, userNames, topicInterest);
+        //5. Prompt GPT for Task Allocation
         const taskAllocation = await chatGPTMessageJson(taskAllocationTextPrompt);
         let taskAllocationJson = await Helper.getMessageFromJsonResponse(taskAllocation);
-        console.log("Step 5 :All task plan------------------------------------------------------------------------------------")
+        console.log("Step 5 :All task allocation------------------------------------------------------------------------------------")
         console.log("task allocation: ");
         console.log(taskAllocationJson)
         
@@ -165,8 +166,7 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
             isGood = cv <= 20;
             break; //i just break to see if the logic work. remove this for further development.
         }
-        const taskAllocationResult = await Helper.jsonToMarkdown(reflectionResult)
-
+        const taskAllocationResult = await Helper.jsonToMarkdownReflection(taskAllocationJson)
         return taskAllocationResult;
     } catch (error) {
         console.error("Error: ", error);

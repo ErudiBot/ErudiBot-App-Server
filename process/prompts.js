@@ -28,7 +28,7 @@ export async function summarizePrompt(conversations, userNames) {
     {
       "main_topic": "Main topic",
       "subtopics": [
-        { "name": "Subtopic", "details": "Important points discussed" }
+        { "name": "Subtopic", "details": "Key discussion points, requirements, or decisions and ddditional important details." }
       ]
     }
   ],
@@ -49,14 +49,13 @@ Note:
 6.If other people were mentioned during the meeting, ignore them.
 7.If a next meeting or follow-up is mentioned, it must be included in the meeting_summary.
 
-
 Additional Rules:
 1.The meeting summary must be long, detailed, and comprehensive, covering points discussed, agreements made, and next meeting arrangements if applicable.
 2.Do not separate the next meeting into a different field; it must be part of the meeting_summary.
 3.Always return the summary in the given JSON structure — no additional text or formats.
 4.Avoid vague or generic summaries like "General discussions."
 
-  Now summarize the following conversation and return the JSON output:\n${conversations}`;
+Now summarize the following conversation and return the JSON output:\n${conversations}`;
 }
 
 //3. GPT Prompt for Task Planning 
@@ -85,21 +84,21 @@ export async function taskPlanningPrompt(meetingSummary, taskName, userNumber){
 }
 
 //4. Prompt GPT for Single Task Agent
-export async function singleTaskAgentPrompt(allTaskPlan, userNames, topicInterest){
-  const prompt = `Estimate the time required to complete the following task based on its complexity and dependencies. Follow these guidelines:
-  1. Analyze the task and assign a realistic time estimate in hours.
-  2. If the task requires additional information, flag it for review instead of making assumptions.
-  3. If the task depends on another, note the dependency and adjust the estimate accordingly.
-  4. Provide a concise justification for the estimated time.
+// export async function singleTaskAgentPrompt(allTaskPlan, userNames, topicInterest){
+//   const prompt = `Estimate the time required to complete the following task based on its complexity and dependencies. Follow these guidelines:
+//   1. Analyze the task and assign a realistic time estimate in hours.
+//   2. If the task requires additional information, flag it for review instead of making assumptions.
+//   3. If the task depends on another, note the dependency and adjust the estimate accordingly.
+//   4. Provide a concise justification for the estimated time.
   
-  Format the output as follows
-    Task: [Task Description]
-    Estimated Time: [X] hours
-    Justification: [Brief reason for the estimate]
-    (If flagged) Status: Flagged for Review - [Reason]
-  `
-  return conversations + "\n" + prompt;
-}
+//   Format the output as follows
+//     Task: [Task Description]
+//     Estimated Time: [X] hours
+//     Justification: [Brief reason for the estimate]
+//     (If flagged) Status: Flagged for Review - [Reason]
+//   `
+//   return conversations + "\n" + prompt;
+// }
 
 //5. Prompt GPT for Task Allocation
 export async function taskAllocationPrompt(allTasksPlan, userNames, topicInterest) {
@@ -150,12 +149,30 @@ export async function reflectionPatternPrompt(taskAllocation, currentCV) {
   - Maintain logical dependencies between tasks.
   - Ensure all tasks remain assigned.
   - The CV of estimated work hours across users must be <= 20%.
+  - Make sure the outcome is in thai leagues.
 
   Instructions:
   - Reassign tasks if necessary to balance workload.
   - Modify estimated hours to achieve fair distribution while keeping reasonable estimations.
   - Ensure each subtask retains a responsible user.
-  - Provide the output in the same JSON format.
+  - Provide the output in the JSON format below.
+
+  Format:
+  "tasks": 
+            [
+              {
+                "task": "Task description",
+                "subtasks": [
+                    {
+                        "subtask_name": "Name of subtask",
+                        "assigned_to": "Username",
+                        "estimated_time_hours": X,
+                        "description": "Description of subtask"
+                    }
+                  ]
+              }
+            ]
+  }
 
   Current Task Allocation (with CV = ${currentCV}%):
   ${JSON.stringify(taskAllocation, null, 2)}
