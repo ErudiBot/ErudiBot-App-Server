@@ -149,7 +149,7 @@ export async function reflectionPatternPrompt(taskAllocation, currentCV) {
   - Maintain logical dependencies between tasks.
   - Ensure all tasks remain assigned.
   - The CV of estimated work hours across users must be <= 20%.
-  - Make sure the outcome is in thai leagues.
+  - Make sure the outcome is in thai language.
 
   Instructions:
   - Reassign tasks if necessary to balance workload.
