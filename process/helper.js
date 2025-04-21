@@ -15,198 +15,213 @@ export async function getMessageFromJsonResponse(jsonResponseText) {
     let data;
     try {
         data = JSON.parse(jsonString);
-        return data
+        return data;
     } catch (error) {
         throw new Error("Failed to parse JSON: " + error.message);
     }
 }
 
-export async function jsonToMarkdown(jsonResponseText) {
-    const data = await getMessageFromJsonResponse(jsonResponseText);
+export async function jsonToMarkdownReflection(data) {
+    let markdown = '';
+  
+    data.tasks.forEach((task, taskIndex) => {
+      markdown += `## Task ${taskIndex + 1}: ${task.task}\n\n`;
+  
+      task.subtasks.forEach((subtask, subIndex) => {
+        markdown += `### Subtask ${subIndex + 1}: ${subtask.subtask_name}\n`;
+        markdown += `- **Assigned To:** ${subtask.assigned_to.trim()}\n`;
+        markdown += `- **Estimated Time:** ${subtask.estimated_time_hours} hours\n`;
+        markdown += `- **Description:** ${subtask.description}\n\n`;
+      });
+  
+      markdown += `---\n`;
+    });
+  
+    return markdown;
+}
 
-    function formatValue(value, indent = "") {
-        if (Array.isArray(value)) {
-            return value.map(item => `\n${indent}- ${typeof item === 'object' ? formatValue(item, indent + "  ") : item}`).join("");
-        } else if (typeof value === 'object' && value !== null) {
-            return Object.entries(value)
-                .map(([subKey, subValue]) => `\n${indent}**${subKey.replace(/_/g, " ")}:** ${formatValue(subValue, indent + "  ")}`)
-                .join("");
+export async function jsonToMarkdown(jsonResponse) {
+    const data = jsonResponse['message'];
+    let markdownOutput = "";
+
+    Object.entries(data).forEach(([key, value]) => {
+        const sectionName = key.replace(/_/g, " ");
+        markdownOutput += `# ${sectionName}\n`;
+
+        if (key === "meeting_summary" || typeof value === "string") {
+            // Simple string value
+            markdownOutput += value + "\n\n";
+        } else if (key === "topics") {
+            markdownOutput += formatTopicsSection(value);
+        } else if (key === "task_list") {
+            markdownOutput += formatTaskListSection(value);
+        } else if (key === "topic_interest") {
+            markdownOutput += formatTopicInterestSection(value);
+        } else if (key === "participants") {
+            markdownOutput += formatParticipantsSection(value);
+        } else if (Array.isArray(value)) {
+            // Default array handling
+            value.forEach(item => {
+                if (typeof item === "string") {
+                    markdownOutput += `- ${item}\n`;
+                } else {
+                    // Object in array
+                    markdownOutput += `- ${formatObjectAsInline(item)}\n`;
+                }
+            });
+            markdownOutput += "\n";
+        } else if (typeof value === "object" && value !== null) {
+            // Default object handling
+            markdownOutput += formatObjectAsInline(value) + "\n\n";
         }
-        return value;
-    }
+    });
 
-    return Object.entries(data)
-        .map(([key, value]) => `# ${key.replace(/_/g, " ")}\n${formatValue(value)}`) //replace _ with spacepar
-        .join("\n\n");
+    return markdownOutput.trim();
+}
+
+// Format the topics section with main topic and subtopics
+function formatTopicsSection(topics) {
+    let output = "";
+    
+    for (const topic of topics) {
+        output += `**${topic.main_topic}**\n`;
+        
+        if (topic.subtopics && Array.isArray(topic.subtopics)) {
+            for (const subtopic of topic.subtopics) {
+                output += `* ${subtopic.name}: ${subtopic.details}\n`;
+            }
+        }
+    }
+    
+    return output + "\n";
+}
+
+// Format the task list section
+function formatTaskListSection(tasks) {
+    let output = "";
+    
+    for (const task of tasks) {
+        const responsible = task.responsible ? `(responsible: ${task.responsible})` : "";
+        output += `* ${task.task} ${responsible}\n`;
+    }
+    
+    return output + "\n";
+}
+
+// Format the topic interest section
+function formatTopicInterestSection(interests) {
+    let output = "";
+    
+    for (const interest of interests) {
+        output += `* ${interest.speaker_name} interested in ${interest.interest}\n`;
+    }
+    
+    return output + "\n";
+}
+
+// Format the participants section
+function formatParticipantsSection(participants) {
+    let output = "";
+    
+    for (const participant of participants) {
+        output += `- ${participant}\n`;
+    }
+    
+    return output + "\n";
+}
+
+// Helper function to format objects inline
+function formatObjectAsInline(obj) {
+    return Object.entries(obj)
+        .map(([key, value]) => {
+            const formattedKey = key.replace(/_/g, " ");
+            return `**${formattedKey}:** ${value}`;
+        })
+        .join(" ");
 }
 
 export async function jsonToMarkdownAddUsernames(jsonResponseText, userNames) {
     let data = await getMessageFromJsonResponse(jsonResponseText);
-    data['participants'] = userNames
-
-    function formatValue(value, indent = "") {
-        if (Array.isArray(value)) {
-            return value.map(item => `\n${indent}- ${typeof item === 'object' ? formatValue(item, indent + "  ") : item}`).join("");
-        } else if (typeof value === 'object' && value !== null) {
-            return Object.entries(value)
-                .map(([subKey, subValue]) => `\n${indent}**${subKey.replace(/_/g, " ")}:** ${formatValue(subValue, indent + "  ")}`)
-                .join("");
-        }
-        return value;
-    }
-
-    return Object.entries(data)
-        .map(([key, value]) => `# ${key.replace(/_/g, " ")}\n${formatValue(value)}`) //replace _ with spacepar
-        .join("\n\n");
+    data['participants'] = userNames;
+    return jsonToMarkdown({ message: data });
 }
 
-// export async function jsonToMarkdownAddUsernames(jsonResponseText, userNames) {
-//     let data = await getMessageFromJsonResponse(jsonResponseText);
-//     data['participants'] = userNames;
 
-//     function formatValue(value, indent = "") {
-//         if (Array.isArray(value)) {
-//             return value.map(item => {
-//                 if (typeof item === 'object' && item !== null) {
-//                     // If item is an object, format its key-value pairs
-//                     return `\n${indent}-` + formatValue(item, indent + "  ");
-//                 } else {
-//                     // If item is a string or other primitive
-//                     return `\n${indent}- ${item}`;
-//                 }
-//             }).join("");
-//         } else if (typeof value === 'object' && value !== null) {
-//             return Object.entries(value)
-//                 .map(([subKey, subValue]) => {
-//                     return `\n${indent}**${subKey.replace(/_/g, " ")}:**${formatValue(subValue, indent + "  ")}`;
-//                 })
-//                 .join("");
-//         }
-//         return ` ${value}`; // space before primitive to keep formatting pretty
-//     }
-
-//     return Object.entries(data)
-//         .map(([key, value]) => `# ${key.replace(/_/g, " ")}\n${formatValue(value).trim()}`)
-//         .join("\n\n");
-// }
-
-
-
-
-
-//not working yet
-export function markdownToJson(markdown) {
-    const lines = markdown.split('\n');
-    const result = {};
-    let currentKey = null;
-    let stack = [];
-    let currentObj = result;
-    let pendingListItem = null;
-
-    const getIndentLevel = (line) => line.search(/\S|$/);
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (!line.trim()) continue;
-
-        // Section header
-        if (line.startsWith('# ')) {
-            currentKey = line.substring(2).replace(/ /g, '_').trim(); // trim to remove \r
-            result[currentKey] = {};
-            currentObj = result[currentKey];
-            stack = [{ indent: 0, obj: currentObj }];
-            continue;
+export async function markdownToJson(noteString) {
+    const jsonResult = {
+      meeting_summary: "",
+      topics: [],
+      task_list: [],
+      topic_interest: [],
+      participants: []
+    };
+  
+    const summaryMatch = noteString.match(/# meeting summary\n([\s\S]*?)\n# topics/);
+    if (summaryMatch) {
+      jsonResult.meeting_summary = summaryMatch[1].trim();
+    }
+  
+    const topicsMatch = noteString.match(/# topics\n([\s\S]*?)\n# task list/);
+    if (topicsMatch) {
+      const topicLines = topicsMatch[1].trim().split('\n');
+      let currentTopic = null;
+  
+      topicLines.forEach(line => {
+        if (line.startsWith('**') && line.endsWith('**')) {
+          if (currentTopic) {
+            jsonResult.topics.push(currentTopic);
+          }
+          currentTopic = {
+            main_topic: line.replace(/\*\*/g, '').trim(),
+            subtopics: []
+          };
+        } else if (line.startsWith('*')) {
+          const [name, details] = line.replace('*', '').split(':').map(str => str.trim());
+          currentTopic.subtopics.push({ name, details });
         }
-
-        const indent = getIndentLevel(line);
-        const trimmed = line.trim();
-
-        if (stack.length === 0) {
-            console.warn(`⚠️ Skipping line before any header section: "${line}"`);
-            continue;
-        }
-
-        // Handle list start (hyphen-only line)
-        if (trimmed === '-') {
-            pendingListItem = { indent, obj: {} };
-            continue;
-        }
-
-        // List item or key-value inside a list
-        const match = trimmed.match(/\*\*(.+?)\*\*:\s*(.*)/);
+      });
+  
+      if (currentTopic) {
+        jsonResult.topics.push(currentTopic);
+      }
+    }
+  
+    const tasksMatch = noteString.match(/# task list\n([\s\S]*?)\n# topic interest/);
+    if (tasksMatch) {
+      const taskLines = tasksMatch[1].trim().split('\n');
+      taskLines.forEach(line => {
+        const match = line.match(/\* (.+) \(responsible: (.+)\)/);
         if (match) {
-            const [, rawKey, rawValue] = match;
-            const key = rawKey.replace(/ /g, '_').trim();
-            const isNested = rawValue === '';
-            const value = rawValue.trim();
-
-            while (stack.length && stack[stack.length - 1].indent >= indent) {
-                stack.pop();
-            }
-
-            if (stack.length === 0) {
-                console.warn(`⚠️ No valid parent found for key-value at line ${i + 1}: "${line}"`);
-                continue;
-            }
-
-            const parent = stack[stack.length - 1].obj;
-
-            if (pendingListItem) {
-                pendingListItem.obj[key] = isNested ? {} : value;
-                if (isNested) {
-                    stack.push({ indent, obj: pendingListItem.obj[key] });
-                }
-
-                // Check if the next line(s) will keep adding to this item
-                const nextLine = lines[i + 1]?.trim();
-                const isNextListItem = nextLine && nextLine.startsWith('-');
-                if (!isNextListItem) {
-                    if (!Array.isArray(parent)) {
-                        const lastKey = Object.keys(parent).pop();
-                        parent[lastKey] = [pendingListItem.obj];
-                    } else {
-                        parent.push(pendingListItem.obj);
-                    }
-                    pendingListItem = null;
-                }
-
-            } else {
-                parent[key] = isNested ? {} : value;
-                if (isNested) {
-                    stack.push({ indent, obj: parent[key] });
-                }
-            }
-            continue;
+          jsonResult.task_list.push({
+            task: match[1].trim(),
+            responsible: match[2].trim()
+          });
         }
-
-        // Plain list values like: - participant
-        if (trimmed.startsWith('- ')) {
-            while (stack.length && stack[stack.length - 1].indent >= indent) {
-                stack.pop();
-            }
-
-            if (stack.length === 0) {
-                console.warn(`⚠️ No valid parent found for list item at line ${i + 1}: "${line}"`);
-                continue;
-            }
-
-            const parent = stack[stack.length - 1].obj;
-
-            if (!Array.isArray(parent)) {
-                const key = Object.keys(parent).pop();
-                parent[key] = [trimmed.slice(2).trim()];
-                stack.push({ indent, obj: parent[key] });
-            } else {
-                parent.push(trimmed.slice(2).trim());
-            }
-        }
+      });
     }
-
-    return result;
+  
+    const interestMatch = noteString.match(/# topic interest\n([\s\S]*?)\n# participants/);
+    if (interestMatch) {
+      const interestLines = interestMatch[1].trim().split('\n');
+      interestLines.forEach(line => {
+        const match = line.match(/\* (.+) interested in (.+)/);
+        if (match) {
+          jsonResult.topic_interest.push({
+            speaker_name: match[1].trim(),
+            interest: match[2].trim()
+          });
+        }
+      });
+    }
+  
+    const participantsMatch = noteString.match(/# participants\n([\s\S]*)/);
+    if (participantsMatch) {
+      const lines = participantsMatch[1].trim().split('\n');
+      jsonResult.participants = lines.map(line => line.replace('-', '').trim());
+    }
+  
+    return JSON.stringify(jsonResult, null, 2);
 }
-
-
-
 
 export async function readTextFile(textFilePath){
     try{
