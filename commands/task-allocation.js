@@ -8,16 +8,20 @@ export default {
         .setType(ApplicationCommandType.Message), // Context menu for messages
 
         async execute(interaction) {
+            const start = Date.now();
             try {
-                await interaction.deferReply({ flags: 64 }); // 64 = ephemeral
-                // await interaction.deferReply({ ephemeral: true }); // Acknowledge the interaction right away
+                await interaction.deferReply({ ephemeral: false }); 
         
                 const message = await interaction.channel.messages.fetch(interaction.targetId);
                 const meetingSummary = message.content;
                 const userNames = await extractParticipants(meetingSummary);
                 const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames);
+
+                const duration = ((Date.now() - start) / 1000).toFixed(2);
+                await interaction.editReply({ 
+                    content: `${taskAllocationResult}\n\n⏱️ Processed in ${duration} seconds.` 
+                });
         
-                await interaction.editReply({ content: taskAllocationResult });
             } catch (error) {
                 console.error('Error in task allocation command:', error);
                 if (interaction.deferred || interaction.replied) {
