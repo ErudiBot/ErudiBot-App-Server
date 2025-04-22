@@ -50,13 +50,11 @@ export default {
         try {
             const summary = await getSummaryFromTranscribed(sortedConversations, userNames);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-            await interaction.editReply(`${summary}\n\n⏱️ Took ${timeTaken} seconds.`);
-
-            await interaction.editReply(summary);
+            await interaction.editReply(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
         } catch (error) {
             console.error(error);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-            await interaction.editReply(`Error summarizing the meeting. ⏱️ Took ${timeTaken} seconds.`);
+            await interaction.editReply(`Error summarizing the meeting. ⏱️ Processed in ${timeTaken} seconds.`);
         }
     }
 };
