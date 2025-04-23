@@ -31,10 +31,10 @@ export async function jsonToMarkdownReflection(data) {
         markdown += `### Subtask ${subIndex + 1}: ${subtask.subtask_name}\n`;
         markdown += `- **Assigned To:** ${subtask.assigned_to.trim()}\n`;
         markdown += `- **Estimated Time:** ${subtask.estimated_time_hours} hours\n`;
-        markdown += `- **Description:** ${subtask.description}\n\n`;
+        markdown += `- **Description:** ${subtask.description}\n`;
       });
   
-      markdown += `---\n`;
+    //   markdown += `\n`;
     });
   
     return markdown;

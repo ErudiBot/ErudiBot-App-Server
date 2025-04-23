@@ -30,7 +30,10 @@ export default {
         await interaction.reply("Started chunk-based recording... 🎧");
 
         receiver.speaking.on('start', async (userId) => {
-            if (chunkRecordings[userId]) return;
+            const guild_member = await interaction.guild.members.fetch(userId);
+            const userName = guild_member.user.username;
+
+            if (chunkRecordings[userName]) return;
         
             const user = await interaction.guild.members.fetch(userId).catch(() => null);
             if (!user) return;
@@ -51,13 +54,13 @@ export default {
             const buffers = [];
             pcmStream.on('data', chunk => buffers.push(chunk));
         
-            const transcripts = [];
+            let all_user_conversations = {};
         
             const interval = setInterval(async () => {
                 if (buffers.length === 0) return; 
         
                 const chunkData = Buffer.concat(buffers.splice(0));
-                const chunkPath = `./recordings/chunk_${userId}_${Date.now()}.pcm`;
+                const chunkPath = `./recordings/chunk_${userName}_${Date.now()}.pcm`;
                 fs.writeFileSync(chunkPath, chunkData);
         
                 const wavPath = chunkPath.replace('.pcm', '.wav');
@@ -69,20 +72,26 @@ export default {
                 });
                 fs.unlinkSync(chunkPath);
         
-                const text = await transcribeAudio(wavPath);
-                transcripts.push(text);
+                const startTime = new Date().getTime();
+                const transcriptText = await transcribeAudio(wavPath);
+
+                all_user_conversations[startTime] = [
+                    userName,
+                    transcriptText
+                ];
+
                 fs.unlinkSync(wavPath);
             }, CHUNK_DURATION_MS);
         
-            chunkRecordings[userId] = {
+            chunkRecordings[userName] = {
                 audioStream,
                 decoder,
                 buffers,
                 interval,
-                transcripts,
+                all_user_conversations
             };
         
-            audioStream.on('end', () => console.log(`Stopped receiving from ${userId}`));
+            audioStream.on('end', () => console.log(`Stopped receiving from ${userName}`));
         });
         
     }

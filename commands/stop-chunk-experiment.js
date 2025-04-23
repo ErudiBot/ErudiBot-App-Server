@@ -16,39 +16,42 @@ export default {
 
         await interaction.deferReply();
 
-        const allTranscripts = {};
+        let all_meeting_conversations = {};
         const userNames = [];
 
-        for (const userId in chunkRecordings) {
-            const { audioStream, interval, transcripts } = chunkRecordings[userId];
+        for (const userName in chunkRecordings) {
+            const { audioStream, interval, all_user_conversations } = chunkRecordings[userName];
 
             clearInterval(interval);
             audioStream.destroy();
 
-            try {
-                const member = await interaction.guild.members.fetch(userId);
-                allTranscripts[member.user.username] = transcripts;
-                userNames.push(member.user.username)
+            try{ 
+                all_meeting_conversations = {
+                  ...all_meeting_conversations,
+                  ...all_user_conversations
+                };
+                userNames.push(userName)
             } catch {
-                allTranscripts[`Unknown-${userId}`] = transcripts;
-                userNames.push(`Unknown-${userId}`);
+                all_meeting_conversations = {
+                  ...all_meeting_conversations,
+                  ...all_user_conversations
+                };
+                userNames.push(`Unknown-${userName}`);
             }
 
-            delete chunkRecordings[userId];
+            delete chunkRecordings[userName];
         }
 
         connection.destroy();
 
-        const sortedConversations = {};
-        let t = 0;
-        for (const [name, chunks] of Object.entries(allTranscripts)) {
-            for (const chunk of chunks) {
-                sortedConversations[t++] = [name, chunk];
-            }
-        }
+        const sortedConversationJson = Object.fromEntries(
+            Object.entries(all_meeting_conversations).sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]))
+        );
+
+        console.log(sortedConversationJson);
 
         try {
-            const summary = await getSummaryFromTranscribed(sortedConversations, userNames);
+            const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
             await interaction.editReply(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
         } catch (error) {

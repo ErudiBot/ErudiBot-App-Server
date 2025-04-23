@@ -18,9 +18,11 @@ export default {
                 const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames);
 
                 const duration = ((Date.now() - start) / 1000).toFixed(2);
-                await interaction.editReply({ 
-                    content: `${taskAllocationResult}\n\n⏱️ Processed in ${duration} seconds.` 
-                });
+                
+                const chunks = splitMessage(`${taskAllocationResult}\n\n⏱️ Processed in ${duration} seconds.`);
+                for (const chunk of chunks) {
+                    await interaction.followUp({ content: chunk, ephemeral: false });
+                }
         
             } catch (error) {
                 console.error('Error in task allocation command:', error);
@@ -32,5 +34,22 @@ export default {
             }
         }
 };
+
+
+function splitMessage(text, maxLength = 2000) {
+    const chunks = [];
+    let current = '';
+
+    for (const line of text.split('\n')) {
+        if ((current + line + '\n').length > maxLength) {
+            chunks.push(current);
+            current = '';
+        }
+        current += line + '\n';
+    }
+    if (current) chunks.push(current);
+    return chunks;
+}
+
 
 
