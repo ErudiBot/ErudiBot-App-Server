@@ -33,7 +33,7 @@ export async function summarizePrompt(conversations, userNames) {
     }
   ],
   "task_list": [
-    { "task": "Details of the task that needs to be done", "responsible": "Responsible person's name or 'ไม่ระบุ' (not specified)" }
+    { "task": "Details of the task that needs to be done", "responsible": "Responsible person's name or 'Not defined'" }
   ],
   "topic_interest": [
     { "speaker_name": "Speaker's name", "interest": "Topic of interest" }
@@ -44,10 +44,11 @@ Note:
 1.All output must be written in Thai language.
 2.Try to infer the "main topics" and "subtopics" based on the conversation.
 3.task_list must include the tasks discussed and assigned during the meeting.
-4.If no specific tasks were mentioned, suggest possible tasks or advise the user to review the meeting plan.
-5.Keep all names exactly as used in the conversation (speaker_name) ${userNames}. If other people were mentioned, ignore them.
-6.If other people were mentioned during the meeting, ignore them.
-7.If a next meeting or follow-up is mentioned, it must be included in the meeting_summary.
+4.responsible value in the task_list must be the name mentioned in the conversation (speaker_name) which are ${userNames} or 'Not defined'
+5.If no specific tasks were mentioned, suggest possible tasks or advise the user to review the meeting plan.
+6.Keep all names exactly as used in the conversation (speaker_name) ${userNames}. If other people were mentioned, ignore them.
+7.If other people were mentioned during the meeting, ignore them.
+8.If a next meeting or follow-up is mentioned, it must be included in the meeting_summary.
 
 Additional Rules:
 1.The meeting summary must be long, detailed, and comprehensive, covering points discussed, agreements made, and next meeting arrangements if applicable.
