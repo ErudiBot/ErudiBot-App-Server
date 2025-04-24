@@ -66,8 +66,10 @@ export async function taskPlanningPrompt(meetingSummary, taskName, userNumber){
   return `Objective:
   Break down tasks into smaller, actionable steps based on the meeting context. Keep tasks clear, achievable, and evenly distributed. Ensure sequencing where needed but allow parallel tasks when possible. Keep the workload reasonable based on the meeting’s purpose.
   Rules:
-  The total number of tasks should not exceed twice the number of participants which is ${totalTaskLimit}.
+  1.Make sure the outcome is in thai language.
+  2.The total number of tasks should not exceed twice the number of participants which is ${totalTaskLimit}.
   Return the structured task plan in JSON format with this structure:  
+  
   {
       "task": "Task description", 
       "responsible": "Person or Unspecified",
@@ -111,6 +113,7 @@ export async function taskAllocationPrompt(allTasksPlan, userNames, topicInteres
   - If multiple participants match, distribute tasks evenly.
   - If no match is found, assign to an available participant.
   - Provide a reasonable estimated completion time in hours.
+  - Make sure the outcome is in thai language.
   
   Return the structured task allocation in JSON format with this structure:
   {
@@ -148,7 +151,7 @@ export async function reflectionPatternPrompt(taskAllocation, currentCV) {
 
   Constraints:
   - Maintain logical dependencies between tasks.
-  - Ensure all tasks remain assigned.
+  - Ensure all tasks remain assigned. But the number of characters must not exceed 2000 characters. 
   - The CV of estimated work hours across users must be <= 20%.
   - Make sure the outcome is in thai language.
 
