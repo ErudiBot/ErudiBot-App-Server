@@ -3,16 +3,17 @@ node_modules
 install.txt
 recordings
 test_audios
-/commands/add.js
-/commands/chat-gpt.js
-/commands/hello2.js
 
-/commands/record-chunk.js
-/commands/stop-chunk.js
+commands/add.js
+commands/chat-gpt.js
+commands/hello2.js
 
-/commands/record-to-summarize.js
-/commands/stop-to-summarize.js
+commands/record-chunk.js
+commands/stop-chunk.js
 
-/commands/transcribe.js
+commands/record-to-summarize.js
+commands/stop-to-summarize.js
+
+commands/transcribe.js
 
 
