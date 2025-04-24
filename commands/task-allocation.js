@@ -1,6 +1,6 @@
 import { ContextMenuCommandBuilder, ApplicationCommandType } from 'discord.js';
 import { getTaskAllocationFromSummary } from '../process/summary_task-allocation.js';
-import { extractParticipants } from '../process/helper.js';
+import { extractParticipants, splitMessage } from '../process/helper.js';
 
 export default {
     data: new ContextMenuCommandBuilder()
@@ -40,22 +40,6 @@ export default {
             }
         }
 };
-
-
-function splitMessage(text, maxLength = 2000) {
-    const chunks = [];
-    let current = '';
-
-    for (const line of text.split('\n')) {
-        if ((current + line + '\n').length > maxLength) {
-            chunks.push(current);
-            current = '';
-        }
-        current += line + '\n';
-    }
-    if (current) chunks.push(current);
-    return chunks;
-}
 
 
 

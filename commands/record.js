@@ -76,10 +76,12 @@ export default {
                 const startTime = new Date().getTime();
                 const transcriptText = await transcribeAudio(wavPath);
 
-                all_user_conversations[startTime] = [
-                    userName,
-                    transcriptText
-                ];
+                if(transcriptText){
+                    all_user_conversations[startTime] = [
+                        userName,
+                        transcriptText
+                    ];
+                }
 
                 fs.unlinkSync(wavPath);
             }, CHUNK_DURATION_MS);

@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import { getVoiceConnection } from '@discordjs/voice';
 import { chunkRecordings } from '../process/chunk_record.js';
 import { getSummaryFromTranscribed } from '../process/summary_task-allocation.js';
+import { splitMessage } from '../process/helper.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -33,11 +34,7 @@ export default {
                 };
                 userNames.push(userName)
             } catch {
-                all_meeting_conversations = {
-                  ...all_meeting_conversations,
-                  ...all_user_conversations
-                };
-                userNames.push(`Unknown-${userName}`);
+                console.log("Warning: can't add a conversation")
             }
 
             delete chunkRecordings[userName];
@@ -67,3 +64,4 @@ export default {
         }
     }
 };
+

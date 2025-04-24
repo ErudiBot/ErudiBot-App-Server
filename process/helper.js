@@ -25,13 +25,13 @@ export async function jsonToMarkdownReflection(data) {
     let markdown = '';
   
     data.tasks.forEach((task, taskIndex) => {
-      markdown += `## Task ${taskIndex + 1}: ${task.task}\n\n`;
+      markdown += `## 🌟 Task ${taskIndex + 1}: ${task.task}\n\n`;
   
       task.subtasks.forEach((subtask, subIndex) => {
         markdown += `### Subtask ${subIndex + 1}: ${subtask.subtask_name}\n`;
-        markdown += `- **Assigned To:** ${subtask.assigned_to.trim()}\n`;
-        markdown += `- **Estimated Time:** ${subtask.estimated_time_hours} hours\n`;
-        markdown += `- **Description:** ${subtask.description}\n`;
+        markdown += `- Assigned To: **${subtask.assigned_to.trim()}**\n`;
+        markdown += `- Estimated Time: ${subtask.estimated_time_hours} hours\n`;
+        markdown += `- Description: ${subtask.description}\n`;
       });
   
     //   markdown += `\n`;
@@ -305,4 +305,20 @@ export function extractParticipants(meetingSummary) {
     }
 
     return participants;
+}
+
+
+export function splitMessage(text, maxLength = 2000) {
+    const chunks = [];
+    let current = '';
+
+    for (const line of text.split('\n')) {
+        if ((current + line + '\n').length > maxLength) {
+            chunks.push(current);
+            current = '';
+        }
+        current += line + '\n';
+    }
+    if (current) chunks.push(current);
+    return chunks;
 }
