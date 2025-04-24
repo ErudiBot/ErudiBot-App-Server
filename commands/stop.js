@@ -53,7 +53,12 @@ export default {
         try {
             const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-            await interaction.editReply(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
+
+            const chunks = splitMessage(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
+                for (const chunk of chunks) {
+                    await interaction.followUp({ content: chunk, ephemeral: false });
+                }
+            // await interaction.editReply(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
         } catch (error) {
             console.error(error);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
