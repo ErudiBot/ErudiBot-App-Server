@@ -15,7 +15,7 @@ const openai = new OpenAI({
 
 export default {
     data: new ContextMenuCommandBuilder()
-        .setName('gpt-reply')
+        .setName('Ask GPT')
         .setType(ApplicationCommandType.Message),
 
     async execute(interaction) {

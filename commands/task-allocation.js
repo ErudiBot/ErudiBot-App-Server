@@ -27,9 +27,9 @@ export default {
             } catch (error) {
                 console.error('Error in task allocation command:', error);
                 if (interaction.deferred || interaction.replied) {
-                    await interaction.editReply({ content: 'Sorry, something went wrong while processing the task allocation.' });
+                    await interaction.editReply({ content: `Sorry, something went wrong while processing the task allocation. Make sure you click from ErudiBot's meeting summary` });
                 } else {
-                    await interaction.reply({ content: 'Sorry, something went wrong while processing the task allocation.', ephemeral: true });
+                    await interaction.reply({ content: `Sorry, something went wrong while processing the task allocation. Make sure you click from ErudiBot's meeting summary`, ephemeral: true });
                 }
             }
         }
