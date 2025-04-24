@@ -6,9 +6,10 @@ import { getSummaryFromTranscribed } from '../process/summary_task-allocation.js
 export default {
     data: new SlashCommandBuilder()
         .setName('stop')
-        .setDescription('Stops chunk-based recording and summarizes  (Moderators will not be recorded)'),
+        .setDescription('Stops the recording and summarizes the meeting (Moderators will not be recorded)'),
 
     async execute(interaction) {
+        console.log('stop is executed')
         const startTime = Date.now();
 
         const connection = getVoiceConnection(interaction.guildId);

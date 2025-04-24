@@ -18,6 +18,12 @@ export default {
                 const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames);
 
                 const duration = ((Date.now() - start) / 1000).toFixed(2);
+
+                if (taskAllocationResult.startsWith('Error') && duration < 1) {
+                    return await interaction.editReply({
+                        content: `Make sure you click from ErudiBot's meeting summary 🥲`,
+                    });
+                }
                 
                 const chunks = splitMessage(`${taskAllocationResult}\n\n⏱️ Processed in ${duration} seconds.`);
                 for (const chunk of chunks) {
@@ -27,7 +33,7 @@ export default {
             } catch (error) {
                 console.error('Error in task allocation command:', error);
                 if (interaction.deferred || interaction.replied) {
-                    await interaction.editReply({ content: `Sorry, something went wrong while processing the task allocation. Make sure you click from ErudiBot's meeting summary` });
+                    await interaction.editReply({ content: `Make sure you click from ErudiBot's meeting summary 🥲` });
                 } else {
                     await interaction.reply({ content: `Sorry, something went wrong while processing the task allocation. Make sure you click from ErudiBot's meeting summary`, ephemeral: true });
                 }

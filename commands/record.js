@@ -12,9 +12,10 @@ const CHUNK_DURATION_MS = 30_000; // 30 seconds
 export default {
     data: new SlashCommandBuilder()
         .setName('record')
-        .setDescription('Records in chunks and processes audio during the meeting (Moderators will not be recorded)'),
+        .setDescription('Records the meeting in order to generate meeting summary (Moderators will not be recorded)'),
 
     async execute(interaction) {
+        console.log('record is executed')
         const member = interaction.member;
         const voiceChannel = member.voice.channel;
 
