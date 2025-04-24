@@ -5,7 +5,7 @@ import { getSummaryFromTranscribed } from '../process/summary_task-allocation.js
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('stop-chunk-experiment')
+        .setName('stop')
         .setDescription('Stops chunk-based recording and summarizes  (Moderators will not be recorded)'),
 
     async execute(interaction) {

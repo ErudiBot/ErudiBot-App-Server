@@ -11,7 +11,7 @@ const CHUNK_DURATION_MS = 30_000; // 30 seconds
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('record-chunk-experiment')
+        .setName('record')
         .setDescription('Records in chunks and processes audio during the meeting (Moderators will not be recorded)'),
 
     async execute(interaction) {
