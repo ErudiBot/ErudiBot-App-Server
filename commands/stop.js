@@ -49,7 +49,7 @@ export default {
         console.log(sortedConversationJson);
 
         try {
-            const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames, interaction);
+            const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames, interaction, 'gpt-4o-mini');
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
             const displayMarkdown = await displayResult(summary, timeTaken)
 

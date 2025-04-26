@@ -15,7 +15,7 @@ export default {
                 const message = await interaction.channel.messages.fetch(interaction.targetId);
                 const meetingSummary = message.content;
                 const userNames = await extractParticipants(meetingSummary);
-                const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames, interaction);
+                const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames, interaction, 'gpt-4.1-nano');
 
                 
                 if (taskAllocationResult.error) {

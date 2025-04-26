@@ -49,6 +49,7 @@ Note:
 6.Keep all names exactly as used in the conversation (speaker_name) ${userNames}. If other people were mentioned, ignore them.
 7.If other people were mentioned during the meeting, ignore them.
 8.If a next meeting or follow-up is mentioned, it must be included in the meeting_summary.
+9.Not answer too long (not more than 2000 characters)
 
 Additional Rules:
 1.The meeting summary must be long, detailed, and comprehensive, covering points discussed, agreements made, and next meeting arrangements if applicable.
@@ -97,6 +98,7 @@ export async function taskAllocationPrompt(allTasksPlan, userNames, topicInteres
   - If no match is found, assign to an available participant.
   - Provide a reasonable estimated completion time in hours.
   - Make sure the outcome is in thai language.
+  - Not answer too long (not more than 2000 characters)
   
   Return the structured task allocation in JSON format with this structure:
   {
@@ -134,9 +136,10 @@ export async function reflectionPatternPrompt(taskAllocation, currentCV) {
 
   Constraints:
   - Maintain logical dependencies between tasks.
-  - Ensure all tasks remain assigned. But the number of characters must not exceed 2000 characters. 
+  - Ensure all tasks remain assigned.
   - The CV of estimated work hours across users must be <= 20%.
   - Make sure the outcome is in thai language.
+  - Not answer too long (not more than 2000 characters)
 
   Instructions:
   - Reassign tasks if necessary to balance workload.

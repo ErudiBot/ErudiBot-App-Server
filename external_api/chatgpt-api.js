@@ -5,18 +5,21 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function chatGPTMessage(text) {
+export async function chatGPTMessage(text, model) {
     try {
         // Prepare the conversation context
         const conversation = [
             { role: 'system', content: 'You are ChatGPT, a helpful AI available in this bot.' },
             { role: 'user', content: text },
         ];
+        let gpt_model = 'gpt-4o-mini';
+        if(model){
+            gpt_model = model;
+        }
 
         // Send the conversation to OpenAI and get the response
         const response = await openai.chat.completions.create({
-            // model: 'gpt-4o-mini',
-            model: 'gpt-4.1-nano',
+            model: gpt_model,
             messages: conversation,
         });
 
@@ -37,7 +40,7 @@ export async function chatGPTMessage(text) {
 }
 
 
-export async function chatGPTMessageJson(text) {
+export async function chatGPTMessageJson(text, model) {
     try {
         // Prepare the conversation context
         const conversation = [
@@ -46,9 +49,12 @@ export async function chatGPTMessageJson(text) {
         ];
 
         // Send the conversation to OpenAI and get the response
+        let gpt_model = 'gpt-4o-mini';
+        if(model){
+            gpt_model = model;
+        }
         const response = await openai.chat.completions.create({
-            // model: 'gpt-4o-mini',
-            model: 'gpt-4.1-nano',
+            model: gpt_model,
             messages: conversation,
             response_format: { "type": "json_object" }
         });

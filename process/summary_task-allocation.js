@@ -53,7 +53,7 @@ export async function getSummaryFromRecords(userNames, resultFilePaths) {
     return meetingSummaryResult;
 }
 
-export async function getSummaryFromTranscribed(allConversationsJson, userNames, interaction) {
+export async function getSummaryFromTranscribed(allConversationsJson, userNames, interaction, model) {
     try {
         const allConverastionsText = await Helper.TranscribedConversationJsonToText(allConversationsJson)
         console.log(allConverastionsText);
@@ -63,7 +63,7 @@ export async function getSummaryFromTranscribed(allConversationsJson, userNames,
             await interaction.editReply("⏳ Step 1: Correcting transcription...");
         }
         const correctTextPrompt = await correctTranscriptPrompt(allConverastionsText);
-        const correctConversations = await chatGPTMessageJson(correctTextPrompt);
+        const correctConversations = await chatGPTMessageJson(correctTextPrompt, model);
 
         const correctConversationsJson = await Helper.getMessageFromJsonResponse(correctConversations)
         const step1Tokens = await Helper.getTokensFromJsonResponse(correctConversations)
@@ -76,7 +76,7 @@ export async function getSummaryFromTranscribed(allConversationsJson, userNames,
             await interaction.editReply("⌛ Step 2: Summarizing the meeting...");
         }
         const summaryTextPrompt = await summarizePrompt(correctConversations, userNames);
-        const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
+        const meetingSummary = await chatGPTMessageJson(summaryTextPrompt, model);
         //2.2. Add user names to response
         const meetingSummaryMarkdown = await Helper.jsonToMarkdownAddUsernames(meetingSummary, userNames);
         const step2Token = await Helper.getTokensFromJsonResponse(meetingSummary)
@@ -142,7 +142,7 @@ export async function getSummaryFromCorrectTranscribedTextPath(Correctedtranscri
     }
 }
 
-export async function getTaskAllocationFromSummary(meetingSummary, userNames, interaction){
+export async function getTaskAllocationFromSummary(meetingSummary, userNames, interaction, model){
     try{
         let meetingSummaryJsonSring;
 
@@ -181,7 +181,7 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames, in
         for (const taskItem of taskList){
             const task = taskItem.task;
             const taskPlanningTextPrompt = await taskPlanningPrompt(meetingSummaryJson, task, userNumber);
-            const taskPlanning = await chatGPTMessageJson(taskPlanningTextPrompt);
+            const taskPlanning = await chatGPTMessageJson(taskPlanningTextPrompt, model);
             const taskPlanJson = await Helper.getMessageFromJsonResponse(taskPlanning);
             const step3SubTokens = await Helper.getTokensFromJsonResponse(taskPlanning);
             allTasksPlan.push(taskPlanJson)
@@ -204,7 +204,7 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames, in
         if(interaction){
             await interaction.editReply("⌛ Step 4: Allocating subtasks...");
         }
-        const taskAllocation = await chatGPTMessageJson(taskAllocationTextPrompt);
+        const taskAllocation = await chatGPTMessageJson(taskAllocationTextPrompt, model);
         let taskAllocationJson = await Helper.getMessageFromJsonResponse(taskAllocation);
         const step4Tokens = await Helper.getTokensFromJsonResponse(taskAllocation);
         taskAllocationTokens = {
@@ -231,7 +231,7 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames, in
 
         while(isGood !== true){
             let reflecTaskAllocationTextPrompt = await reflectionPatternPrompt(taskAllocationJson, cv)
-            reflectionResult = await chatGPTMessageJson(reflecTaskAllocationTextPrompt)
+            reflectionResult = await chatGPTMessageJson(reflecTaskAllocationTextPrompt, model)
             taskAllocationJson = await Helper.getMessageFromJsonResponse(reflectionResult);
             const step5SubTokens = await Helper.getTokensFromJsonResponse(reflectionResult);
             step5TokensList.push(step5SubTokens);
