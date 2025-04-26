@@ -86,24 +86,7 @@ export async function taskPlanningPrompt(meetingSummary, taskName, userNumber){
   Now plan the task ${taskName} from the following meeting summary and return the JSON output:\n${meetingSummary}`
 }
 
-//4. Prompt GPT for Single Task Agent
-// export async function singleTaskAgentPrompt(allTaskPlan, userNames, topicInterest){
-//   const prompt = `Estimate the time required to complete the following task based on its complexity and dependencies. Follow these guidelines:
-//   1. Analyze the task and assign a realistic time estimate in hours.
-//   2. If the task requires additional information, flag it for review instead of making assumptions.
-//   3. If the task depends on another, note the dependency and adjust the estimate accordingly.
-//   4. Provide a concise justification for the estimated time.
-  
-//   Format the output as follows
-//     Task: [Task Description]
-//     Estimated Time: [X] hours
-//     Justification: [Brief reason for the estimate]
-//     (If flagged) Status: Flagged for Review - [Reason]
-//   `
-//   return conversations + "\n" + prompt;
-// }
-
-//5. Prompt GPT for Task Allocation
+//4. Prompt GPT for Task Allocation
 export async function taskAllocationPrompt(allTasksPlan, userNames, topicInterest) {
   return `Objective:
   Assign each subtask to a participant based on their expertise and interest while ensuring fair workload distribution. Include an estimated time to complete each subtask.
@@ -141,7 +124,7 @@ export async function taskAllocationPrompt(allTasksPlan, userNames, topicInteres
   ${JSON.stringify(allTasksPlan)}`;
 }
 
-//6. Prompt GPT for Reflection Pattern 
+//5. Prompt GPT for Reflection Pattern 
 export async function reflectionPatternPrompt(taskAllocation, currentCV) {
   return `
   Objective:

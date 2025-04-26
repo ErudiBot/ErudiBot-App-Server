@@ -48,30 +48,50 @@ export async function getSummaryFromRecords(userNames, resultFilePaths) {
     const sortedConversations = Object.fromEntries(
         Object.entries(allConversations).sort(([keyA], [keyB]) => parseFloat(keyA) - parseFloat(keyB))
     );
-    let meetingSummary = await getSummaryFromTranscribed(sortedConversations, userNames)
+    let meetingSummaryResult = await getSummaryFromTranscribed(sortedConversations, userNames)
 
-    return meetingSummary;
+    return meetingSummaryResult;
 }
 
 export async function getSummaryFromTranscribed(allConversationsJson, userNames) {
     try {
         const allConverastionsText = await Helper.TranscribedConversationJsonToText(allConversationsJson)
         console.log(allConverastionsText);
+
         //1. Correct transcription text
         const correctTextPrompt = await correctTranscriptPrompt(allConverastionsText);
         const correctConversations = await chatGPTMessageJson(correctTextPrompt);
 
         const correctConversationsJson = await Helper.getMessageFromJsonResponse(correctConversations)
+        const step1Tokens = await Helper.getTokensFromJsonResponse(correctConversations)
         console.log("Step 1 :Correct Conversation --------------------------------------------------------------------")
-        console.log(correctConversationsJson)
+        console.log(correctConversationsJson);
+        console.log(`Step 1 Tokens: ${JSON.stringify(step1Tokens)}`);
 
         //2. GPT Prompt For Summary + Topic Interest
         const summaryTextPrompt = await summarizePrompt(correctConversations, userNames);
         const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
         //2.2. Add user names to response
         const meetingSummaryMarkdown = await Helper.jsonToMarkdownAddUsernames(meetingSummary, userNames);
+        const step2Token = await Helper.getTokensFromJsonResponse(meetingSummary)
         console.log("Step 2 :Summarize Meeting --------------------------------------------------------------------")
-        return meetingSummaryMarkdown;
+        console.log(meetingSummaryMarkdown);
+        console.log(`Step 2 Tokens: ${JSON.stringify(step2Token)}`);
+
+        const meetingSummaryTokens = {
+            "prompt_tokens": step1Tokens.prompt_tokens + step2Token.prompt_tokens,
+            "completion_tokens": step1Tokens.completion_tokens + step2Token.completion_tokens
+        };
+
+        const meetingSummaryResult = {
+            "markdown": meetingSummaryMarkdown,
+            "tokens": meetingSummaryTokens
+        }
+
+        console.log(`\nMeeting Summary Tokens: ${JSON.stringify(meetingSummaryTokens)}`)
+        console.log("\nMeeting Summary completed ✅")
+
+        return meetingSummaryResult;
 
     } catch (error) {
         console.error("Error in getSummaryFromTranscribedText:", error);
@@ -85,8 +105,8 @@ export async function getSummaryFromTranscribedTextPath(transcribedPaths, userNa
         const fileContent = await fs.readFile(transcribedPaths, 'utf-8');  // Corrected readFile usage
         const allConversationsJson = JSON.parse(fileContent);
 
-        const meetingSummaryMarkdown = await getSummaryFromTranscribed(allConversationsJson, userNames);
-        return meetingSummaryMarkdown;
+        const meetingSummaryResult = await getSummaryFromTranscribed(allConversationsJson, userNames);
+        return meetingSummaryResult;
 
     } catch (error) {
         console.error("Error in getSummaryFromTranscribedText:", error);
@@ -124,52 +144,95 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
         // console.log("topic interest:")
         // console.log(topicInterest)
 
-        //3&4. GPT Prompt for Task Planning  
+        let taskAllocationTokens = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0
+        }
+
+        //3. GPT Prompt for Task Planning  
         const userNumber = userNames.length
         const taskList = meetingSummaryJson["task_list"]
-        const allTasksPlan = []
+        const allTasksPlan = [];
+        const step3TokensList = [];
         for (const taskItem of taskList){
             const task = taskItem.task;
             const taskPlanningTextPrompt = await taskPlanningPrompt(meetingSummaryJson, task, userNumber);
             const taskPlanning = await chatGPTMessageJson(taskPlanningTextPrompt);
             const taskPlanJson = await Helper.getMessageFromJsonResponse(taskPlanning);
+            const step3SubTokens = await Helper.getTokensFromJsonResponse(taskPlanning);
             allTasksPlan.push(taskPlanJson)
+            step3TokensList.push(step3SubTokens)
+            taskAllocationTokens = {
+                "prompt_tokens": taskAllocationTokens.prompt_tokens + step3SubTokens.prompt_tokens,
+                "completion_tokens": taskAllocationTokens.completion_tokens + step3SubTokens.completion_tokens
+            };
         }
-        console.log("Step 3 and 4 :All task plan------------------------------------------------------------------------------")
+        console.log("Step 3 :All task plan------------------------------------------------------------------------------")
         console.log(allTasksPlan);
+        console.log(`Step 3 Tokens: ${JSON.stringify(step3TokensList)}`);
 
         if (allTasksPlan.length === 0) {
             throw new Error("No tasks planned. Task list may be empty or processing failed.");
         }
 
         const taskAllocationTextPrompt = await taskAllocationPrompt(allTasksPlan, userNames, topicInterest);
-        //5. Prompt GPT for Task Allocation
+        //4. Prompt GPT for Task Allocation
         const taskAllocation = await chatGPTMessageJson(taskAllocationTextPrompt);
         let taskAllocationJson = await Helper.getMessageFromJsonResponse(taskAllocation);
-        console.log("Step 5 :All task allocation------------------------------------------------------------------------------------")
-        console.log("task allocation: ");
-        console.log(taskAllocationJson)
+        const step4Tokens = await Helper.getTokensFromJsonResponse(taskAllocation);
+        taskAllocationTokens = {
+            "prompt_tokens": taskAllocationTokens.prompt_tokens + step4Tokens.prompt_tokens,
+            "completion_tokens": taskAllocationTokens.completion_tokens + step4Tokens.completion_tokens
+        };
         
-        // //6. Prompt GPT for Reflection Pattern 
+
+        console.log("Step 4 :All task allocation------------------------------------------------------------------------------------")
+        console.log(taskAllocationJson)
+        console.log(`Step 4 Tokens: ${JSON.stringify(step4Tokens)}`);
+        
+        //5. Prompt GPT for Reflection Pattern 
         let cv = await Helper.CVDistributed(taskAllocationJson)
         let isGood = cv <= 20;
-        console.log("Step 6 :Reflection--------------------------------------------------------------------------------------")
+        console.log("Step 5 :Reflection--------------------------------------------------------------------------------------")
         console.log("is good");
         console.log(isGood)
         let reflectionResult = taskAllocation;
+        const step5TokensList = [];
 
         while(isGood !== true){
             let reflecTaskAllocationTextPrompt = await reflectionPatternPrompt(taskAllocationJson, cv)
             reflectionResult = await chatGPTMessageJson(reflecTaskAllocationTextPrompt)
             taskAllocationJson = await Helper.getMessageFromJsonResponse(reflectionResult);
+            const step5SubTokens = await Helper.getTokensFromJsonResponse(reflectionResult);
+            step5TokensList.push(step5SubTokens);
+            taskAllocationTokens = {
+                "prompt_tokens": taskAllocationTokens.prompt_tokens + step5SubTokens.prompt_tokens,
+                "completion_tokens": taskAllocationTokens.completion_tokens + step5SubTokens.completion_tokens
+            };
+
             cv = await Helper.CVDistributed(taskAllocationJson)
             isGood = cv <= 20;
             break; //i just break to see if the logic work. remove this for further development.
         }
-        const taskAllocationResult = await Helper.jsonToMarkdownReflection(taskAllocationJson)
+        const taskAllocationMarkdown = await Helper.jsonToMarkdownReflection(taskAllocationJson)
+
+        console.log(taskAllocationMarkdown);
+        console.log(`Step 5 Tokens: ${JSON.stringify(step5TokensList)}`);
+
+        const taskAllocationResult = {
+            "markdown": taskAllocationMarkdown,
+            "tokens": taskAllocationTokens
+        }
+
+        console.log(`\nTask Allocation Tokens: ${JSON.stringify(taskAllocationTokens)}`)
+        console.log("\nTask Allocation completed ✅")
+
         return taskAllocationResult;
     } catch (error) {
         console.error("Error: ", error);
-        return "Error processing task allocation.";
+        return {
+            error: "Error processing task allocation.",
+            details: error.message
+        };
     }
 }

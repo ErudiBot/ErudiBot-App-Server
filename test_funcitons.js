@@ -38,10 +38,8 @@ import * as Helper from "./process/helper.js"
 try {
     const transcribedPaths = './test_results/transcribed.json';
     const userNames = ['ItsRitte', 'NaThatHai', 'myo'];
-    const meetingSummary = await getSummaryFromTranscribedTextPath(transcribedPaths, userNames);
-    console.log(meetingSummary)
-    const taskAllocation = await getTaskAllocationFromSummary(meetingSummary, userNames);
-    console.log(taskAllocation);
+    const meetingSummaryResult = await getSummaryFromTranscribedTextPath(transcribedPaths, userNames);
+    await getTaskAllocationFromSummary(meetingSummaryResult.markdown, userNames);
 } catch (err) {
     console.error(err);
 }

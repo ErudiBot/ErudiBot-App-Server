@@ -1,6 +1,6 @@
 import { ContextMenuCommandBuilder, ApplicationCommandType } from 'discord.js';
 import { getTaskAllocationFromSummary } from '../process/summary_task-allocation.js';
-import { extractParticipants, splitMessage } from '../process/helper.js';
+import { extractParticipants, splitMessage, displayResult} from '../process/helper.js';
 
 export default {
     data: new ContextMenuCommandBuilder()
@@ -17,15 +17,24 @@ export default {
                 const userNames = await extractParticipants(meetingSummary);
                 const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames);
 
-                const duration = ((Date.now() - start) / 1000).toFixed(2);
-
-                if (taskAllocationResult.startsWith('Error') && duration < 1) {
+                
+                if (taskAllocationResult.error) {
+                    if(timeTaken < 1){
+                        return await interaction.editReply({
+                            content: `Make sure you click from ErudiBot's meeting summary 🥲`,
+                        });
+                    }
                     return await interaction.editReply({
-                        content: `Make sure you click from ErudiBot's meeting summary 🥲`,
+                        content: `${taskAllocationResult.error}\n${taskAllocationResult.details}`,
                     });
                 }
+
+                const timeTaken = ((Date.now() - start) / 1000).toFixed(2);
+
+
+                const displayMarkdown = await displayResult(taskAllocationResult, timeTaken);
                 
-                const chunks = splitMessage(`${taskAllocationResult}\n\n⏱️ Processed in ${duration} seconds.`);
+                const chunks = splitMessage(displayMarkdown);
                 for (const chunk of chunks) {
                     await interaction.followUp({ content: chunk, ephemeral: false });
                 }
@@ -33,9 +42,9 @@ export default {
             } catch (error) {
                 console.error('Error in task allocation command:', error);
                 if (interaction.deferred || interaction.replied) {
-                    await interaction.editReply({ content: `Make sure you click from ErudiBot's meeting summary 🥲` });
+                    await interaction.editReply({ content: `Sorry, something went wrong while processing the task allocation.` });
                 } else {
-                    await interaction.reply({ content: `Sorry, something went wrong while processing the task allocation. Make sure you click from ErudiBot's meeting summary`, ephemeral: true });
+                    await interaction.reply({ content: `Sorry, something went wrong while processing the task allocation.`, ephemeral: true });
                 }
             }
         }

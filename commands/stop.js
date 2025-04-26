@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import { getVoiceConnection } from '@discordjs/voice';
 import { chunkRecordings } from '../process/chunk_record.js';
 import { getSummaryFromTranscribed } from '../process/summary_task-allocation.js';
-import { splitMessage } from '../process/helper.js';
+import { splitMessage, displayResult } from '../process/helper.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -51,16 +51,17 @@ export default {
         try {
             const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+            const displayMarkdown = await displayResult(summary, timeTaken)
 
-            const chunks = splitMessage(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
+            const chunks = splitMessage(displayMarkdown);
                 for (const chunk of chunks) {
                     await interaction.followUp({ content: chunk, ephemeral: false });
                 }
-            // await interaction.editReply(`${summary}\n\n⏱️ Processed in ${timeTaken} seconds.`);
+
         } catch (error) {
             console.error(error);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-            await interaction.editReply(`Error summarizing the meeting. ⏱️ Processed in ${timeTaken} seconds.`);
+            await interaction.editReply(`Error summarizing the meeting. ⏱️ Processed in ${timeTaken} seconds.\n${tokenText}`);
         }
     }
 };

@@ -21,6 +21,14 @@ export async function getMessageFromJsonResponse(jsonResponseText) {
     }
 }
 
+export async function getTokensFromJsonResponse(jsonResponseText){
+    const jsonResponse = JSON.parse(jsonResponseText);
+    if (!jsonResponse || !jsonResponse.tokens) {
+        throw new Error("Invalid input: 'tokens' property is missing.");
+    }
+    return jsonResponse.tokens
+}
+
 export async function jsonToMarkdownReflection(data) {
     let markdown = '';
   
@@ -77,6 +85,14 @@ export async function jsonToMarkdown(jsonResponse) {
     });
 
     return markdownOutput.trim();
+}
+
+export async function displayResult(result, timeTaken){
+    const promptTokens = result.tokens.prompt_tokens
+    const completionTokens = result.tokens.completion_tokens
+    const tokenText = `🧩 Token usage: ${promptTokens} prompt tokens and ${completionTokens} completion tokens`
+
+    return `${result.markdown}\n\n⏱️ Processed in ${timeTaken} seconds.\n${tokenText}`
 }
 
 // Format the topics section with main topic and subtopics

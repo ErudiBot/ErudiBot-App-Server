@@ -15,7 +15,8 @@ export async function chatGPTMessage(text) {
 
         // Send the conversation to OpenAI and get the response
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            // model: 'gpt-4o-mini',
+            model: 'gpt-4.1-nano',
             messages: conversation,
         });
 
@@ -46,14 +47,22 @@ export async function chatGPTMessageJson(text) {
 
         // Send the conversation to OpenAI and get the response
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            // model: 'gpt-4o-mini',
+            model: 'gpt-4.1-nano',
             messages: conversation,
             response_format: { "type": "json_object" }
         });
 
+        const promptTokens = response.usage.prompt_tokens;
+        const completionTokens = response.usage.completion_tokens;
+        const tokensReport = {
+            "prompt_tokens":promptTokens,
+            "completion_tokens": completionTokens
+        }
+
         const responseMessage = response.choices[0].message.content;
 
-        return JSON.stringify({ success: true, message: responseMessage });
+        return JSON.stringify({ success: true, message: responseMessage, tokens: tokensReport});
 
     } catch (error) {
         console.error('OpenAI Error:', error);
@@ -65,6 +74,6 @@ export async function chatGPTMessageJson(text) {
             errorMessage = 'The API is currently rate-limited. Please wait a moment and try again.';
         }
 
-        return JSON.stringify({ success: false, error: errorMessage });
+        return JSON.stringify({ success: false, error: errorMessage, tokens: tokensReport });
     }
 }
