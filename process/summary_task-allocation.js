@@ -53,12 +53,15 @@ export async function getSummaryFromRecords(userNames, resultFilePaths) {
     return meetingSummaryResult;
 }
 
-export async function getSummaryFromTranscribed(allConversationsJson, userNames) {
+export async function getSummaryFromTranscribed(allConversationsJson, userNames, interaction) {
     try {
         const allConverastionsText = await Helper.TranscribedConversationJsonToText(allConversationsJson)
         console.log(allConverastionsText);
 
         //1. Correct transcription text
+        if(interaction){
+            await interaction.editReply("⏳ Step 1: Correcting transcription...");
+        }
         const correctTextPrompt = await correctTranscriptPrompt(allConverastionsText);
         const correctConversations = await chatGPTMessageJson(correctTextPrompt);
 
@@ -69,6 +72,9 @@ export async function getSummaryFromTranscribed(allConversationsJson, userNames)
         console.log(`Step 1 Tokens: ${JSON.stringify(step1Tokens)}`);
 
         //2. GPT Prompt For Summary + Topic Interest
+        if(interaction){
+            await interaction.editReply("⌛ Step 2: Summarizing the meeting...");
+        }
         const summaryTextPrompt = await summarizePrompt(correctConversations, userNames);
         const meetingSummary = await chatGPTMessageJson(summaryTextPrompt);
         //2.2. Add user names to response
@@ -90,6 +96,9 @@ export async function getSummaryFromTranscribed(allConversationsJson, userNames)
 
         console.log(`\nMeeting Summary Tokens: ${JSON.stringify(meetingSummaryTokens)}`)
         console.log("\nMeeting Summary completed ✅")
+        if(interaction){
+            await interaction.editReply("Meeting Summary completed ✅")
+        }
 
         return meetingSummaryResult;
 
@@ -133,9 +142,21 @@ export async function getSummaryFromCorrectTranscribedTextPath(Correctedtranscri
     }
 }
 
-export async function getTaskAllocationFromSummary(meetingSummary, userNames){
+export async function getTaskAllocationFromSummary(meetingSummary, userNames, interaction){
     try{
-        const meetingSummaryJsonSring = await Helper.markdownToJson(meetingSummary)
+        let meetingSummaryJsonSring;
+
+        try {
+            meetingSummaryJsonSring = await Helper.markdownToJson(meetingSummary);
+        } catch (markdownError) {
+            console.error("Error in markdownToJson:", markdownError);
+            return {
+                error: "Invalid meeting summary format. Make sure you click from ErudiBot's meeting summary 🥲",
+                details: markdownError.message
+            };
+        }
+
+
         const meetingSummaryJson = JSON.parse(meetingSummaryJsonSring)
         if (!meetingSummaryJson || !meetingSummaryJson["topic_interest"] || !meetingSummaryJson["task_list"]) {
             throw new Error("Invalid meeting summary format.");
@@ -150,6 +171,9 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
         }
 
         //3. GPT Prompt for Task Planning  
+        if(interaction){
+            await interaction.editReply("⏳ Step 3: Planing subtasks from tasks...");
+        }
         const userNumber = userNames.length
         const taskList = meetingSummaryJson["task_list"]
         const allTasksPlan = [];
@@ -177,6 +201,9 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
 
         const taskAllocationTextPrompt = await taskAllocationPrompt(allTasksPlan, userNames, topicInterest);
         //4. Prompt GPT for Task Allocation
+        if(interaction){
+            await interaction.editReply("⌛ Step 4: Allocating subtasks...");
+        }
         const taskAllocation = await chatGPTMessageJson(taskAllocationTextPrompt);
         let taskAllocationJson = await Helper.getMessageFromJsonResponse(taskAllocation);
         const step4Tokens = await Helper.getTokensFromJsonResponse(taskAllocation);
@@ -191,6 +218,9 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
         console.log(`Step 4 Tokens: ${JSON.stringify(step4Tokens)}`);
         
         //5. Prompt GPT for Reflection Pattern 
+        if(interaction){
+            await interaction.editReply("⏳ Step 5: Reflecting task allocation...");
+        }
         let cv = await Helper.CVDistributed(taskAllocationJson)
         let isGood = cv <= 20;
         console.log("Step 5 :Reflection--------------------------------------------------------------------------------------")
@@ -226,6 +256,9 @@ export async function getTaskAllocationFromSummary(meetingSummary, userNames){
 
         console.log(`\nTask Allocation Tokens: ${JSON.stringify(taskAllocationTokens)}`)
         console.log("\nTask Allocation completed ✅")
+        if(interaction){
+            await interaction.editReply("Task Allocation completed ✅")
+        }
 
         return taskAllocationResult;
     } catch (error) {

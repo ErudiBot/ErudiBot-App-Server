@@ -15,15 +15,10 @@ export default {
                 const message = await interaction.channel.messages.fetch(interaction.targetId);
                 const meetingSummary = message.content;
                 const userNames = await extractParticipants(meetingSummary);
-                const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames);
+                const taskAllocationResult = await getTaskAllocationFromSummary(meetingSummary, userNames, interaction);
 
                 
                 if (taskAllocationResult.error) {
-                    if(timeTaken < 1){
-                        return await interaction.editReply({
-                            content: `Make sure you click from ErudiBot's meeting summary 🥲`,
-                        });
-                    }
                     return await interaction.editReply({
                         content: `${taskAllocationResult.error}\n${taskAllocationResult.details}`,
                     });

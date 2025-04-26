@@ -162,7 +162,6 @@ export async function jsonToMarkdownAddUsernames(jsonResponseText, userNames) {
     return jsonToMarkdown({ message: data });
 }
 
-
 export async function markdownToJson(noteString) {
     const jsonResult = {
       meeting_summary: "",
@@ -173,71 +172,77 @@ export async function markdownToJson(noteString) {
     };
   
     const summaryMatch = noteString.match(/# meeting summary\n([\s\S]*?)\n# topics/);
-    if (summaryMatch) {
-      jsonResult.meeting_summary = summaryMatch[1].trim();
+    if (!summaryMatch) {
+      throw new Error("Missing section: # meeting summary");
     }
+    jsonResult.meeting_summary = summaryMatch[1].trim();
   
     const topicsMatch = noteString.match(/# topics\n([\s\S]*?)\n# task list/);
-    if (topicsMatch) {
-      const topicLines = topicsMatch[1].trim().split('\n');
-      let currentTopic = null;
+    if (!topicsMatch) {
+      throw new Error("Missing section: # topics");
+    }
+    const topicLines = topicsMatch[1].trim().split('\n');
+    let currentTopic = null;
   
-      topicLines.forEach(line => {
-        if (line.startsWith('**') && line.endsWith('**')) {
-          if (currentTopic) {
-            jsonResult.topics.push(currentTopic);
-          }
-          currentTopic = {
-            main_topic: line.replace(/\*\*/g, '').trim(),
-            subtopics: []
-          };
-        } else if (line.startsWith('*')) {
-          const [name, details] = line.replace('*', '').split(':').map(str => str.trim());
-          currentTopic.subtopics.push({ name, details });
+    topicLines.forEach(line => {
+      if (line.startsWith('**') && line.endsWith('**')) {
+        if (currentTopic) {
+          jsonResult.topics.push(currentTopic);
         }
-      });
-  
-      if (currentTopic) {
-        jsonResult.topics.push(currentTopic);
+        currentTopic = {
+          main_topic: line.replace(/\*\*/g, '').trim(),
+          subtopics: []
+        };
+      } else if (line.startsWith('*')) {
+        const [name, details] = line.replace('*', '').split(':').map(str => str.trim());
+        currentTopic.subtopics.push({ name, details });
       }
+    });
+  
+    if (currentTopic) {
+      jsonResult.topics.push(currentTopic);
     }
   
     const tasksMatch = noteString.match(/# task list\n([\s\S]*?)\n# topic interest/);
-    if (tasksMatch) {
-      const taskLines = tasksMatch[1].trim().split('\n');
-      taskLines.forEach(line => {
-        const match = line.match(/\* (.+) \(responsible: (.+)\)/);
-        if (match) {
-          jsonResult.task_list.push({
-            task: match[1].trim(),
-            responsible: match[2].trim()
-          });
-        }
-      });
+    if (!tasksMatch) {
+      throw new Error("Missing section: # task list");
     }
+    const taskLines = tasksMatch[1].trim().split('\n');
+    taskLines.forEach(line => {
+      const match = line.match(/\* (.+) \(responsible: (.+)\)/);
+      if (match) {
+        jsonResult.task_list.push({
+          task: match[1].trim(),
+          responsible: match[2].trim()
+        });
+      }
+    });
   
     const interestMatch = noteString.match(/# topic interest\n([\s\S]*?)\n# participants/);
-    if (interestMatch) {
-      const interestLines = interestMatch[1].trim().split('\n');
-      interestLines.forEach(line => {
-        const match = line.match(/\* (.+) interested in (.+)/);
-        if (match) {
-          jsonResult.topic_interest.push({
-            speaker_name: match[1].trim(),
-            interest: match[2].trim()
-          });
-        }
-      });
+    if (!interestMatch) {
+      throw new Error("Missing section: # topic interest");
     }
+    const interestLines = interestMatch[1].trim().split('\n');
+    interestLines.forEach(line => {
+      const match = line.match(/\* (.+) interested in (.+)/);
+      if (match) {
+        jsonResult.topic_interest.push({
+          speaker_name: match[1].trim(),
+          interest: match[2].trim()
+        });
+      }
+    });
   
     const participantsMatch = noteString.match(/# participants\n([\s\S]*)/);
-    if (participantsMatch) {
-      const lines = participantsMatch[1].trim().split('\n');
-      jsonResult.participants = lines.map(line => line.replace('-', '').trim());
+    if (!participantsMatch) {
+      throw new Error("Missing section: # participants");
     }
+    const lines = participantsMatch[1].trim().split('\n');
+    jsonResult.participants = lines.map(line => line.replace('-', '').trim());
   
     return JSON.stringify(jsonResult, null, 2);
-}
+  }
+  
 
 export async function readTextFile(textFilePath){
     try{

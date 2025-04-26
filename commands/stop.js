@@ -49,7 +49,7 @@ export default {
         console.log(sortedConversationJson);
 
         try {
-            const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames);
+            const summary = await getSummaryFromTranscribed(sortedConversationJson, userNames, interaction);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
             const displayMarkdown = await displayResult(summary, timeTaken)
 
@@ -61,7 +61,7 @@ export default {
         } catch (error) {
             console.error(error);
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-            await interaction.editReply(`Error summarizing the meeting. ⏱️ Processed in ${timeTaken} seconds.\n${tokenText}`);
+            await interaction.editReply(`Error summarizing the meeting. ⏱️ Processed in ${timeTaken} seconds.`);
         }
     }
 };
