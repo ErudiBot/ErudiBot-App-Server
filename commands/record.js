@@ -16,10 +16,11 @@ export default {
 
     async execute(interaction) {
         console.log('record is executed')
-        const member = interaction.member;
+        const member = await interaction.member;
         const voiceChannel = member.voice.channel;
 
-        if (!voiceChannel) return interaction.reply("You must be in a voice channel!");
+        await interaction.deferReply();
+        if (!voiceChannel) return await interaction.editReply("You must be in a voice channel!");
 
         const connection = joinVoiceChannel({
             channelId: voiceChannel.id,
@@ -28,7 +29,7 @@ export default {
         });
 
         const receiver = connection.receiver;
-        await interaction.reply("Started chunk-based recording... 🎧");
+        await interaction.editReply("Started chunk-based recording... 🎧");
 
         receiver.speaking.on('start', async (userId) => {
             const guild_member = await interaction.guild.members.fetch(userId);

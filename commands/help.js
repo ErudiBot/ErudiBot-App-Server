@@ -6,7 +6,8 @@ export default {
         .setDescription('Get a guide on how to use ErudiBot’s commands and features.'),
     async execute(interaction) {
         console.log('help is executed')
-        await interaction.reply(
+        await interaction.deferReply();
+        await interaction.editReply(
             `👋 Hi! I'm **ErudiBot**, your intelligent meeting assistant. Here's how to use me:\n\n` +
             `## 📌 Slash Commands:\n` +
             `• \`/record\` – Start recording the meeting. Make sure you're in a voice channel before using this!\n` +

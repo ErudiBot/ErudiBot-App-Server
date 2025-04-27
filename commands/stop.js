@@ -3,6 +3,7 @@ import { getVoiceConnection } from '@discordjs/voice';
 import { chunkRecordings } from '../process/chunk_record.js';
 import { getSummaryFromTranscribed } from '../process/summary_task-allocation.js';
 import { splitMessage, displayResult } from '../process/helper.js';
+import { finalizeBuffer } from '../process/finalize_buffer.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -13,18 +14,26 @@ export default {
         console.log('stop is executed')
         const startTime = Date.now();
 
-        const connection = getVoiceConnection(interaction.guildId);
-        if (!connection) return interaction.reply("Bot is not in a voice channel!");
-
         await interaction.deferReply();
+
+        const connection = await getVoiceConnection(interaction.guildId);
+        if (!connection) return await interaction.editReply("Bot is not in a voice channel!");
 
         let all_meeting_conversations = {};
         const userNames = [];
 
         for (const userName in chunkRecordings) {
-            const { audioStream, interval, all_user_conversations } = chunkRecordings[userName];
+            const { audioStream, buffers, interval, all_user_conversations } = chunkRecordings[userName];
 
             clearInterval(interval);
+
+            // Use the helper to finalize any remaining audio
+            const finalizedData = await finalizeBuffer(userName, buffers);
+            if (finalizedData) {
+                const { startTime, userName: finalizedUser, transcriptText } = finalizedData;
+                all_user_conversations[startTime] = [finalizedUser, transcriptText];
+            }
+
             audioStream.destroy();
 
             try{ 
@@ -65,4 +74,3 @@ export default {
         }
     }
 };
-
