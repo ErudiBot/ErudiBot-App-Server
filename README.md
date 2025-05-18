@@ -3,6 +3,8 @@
 ErudiBot is a smart assistant for your Discord meetings. It enhances collaboration by automatically recording, transcribing, summarizing, and assigning tasks based on voice conversations.
 
 This repository contains the application server for ErudiBot. It connects to external APIs such as OpenAI's Whisper (for speech-to-text) and ChatGPT (for summarization and intelligent responses).
+To reduce processing time after the meeting, audio is sent to Whisper in 30-second chunks during the recording session.
+
 We have also integrated the Planning and Reflection patterns from the concept of Agentic AI Design Patterns to improve ErudiBot's performance and response quality.
 
 Below are images of the system architecture and prompt flow.
