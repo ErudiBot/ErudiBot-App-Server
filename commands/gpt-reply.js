@@ -68,8 +68,6 @@ export default {
                 temperature: 0.7,
             });
 
-            console.log(completion)
-
             const reply = completion.choices[0].message.content || 'No response received.';
             const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
 

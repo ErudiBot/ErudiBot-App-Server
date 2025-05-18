@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { ApplicationCommandPermissionType, Client, Collection, GatewayIntentBits, IntentsBitField, REST, Routes } from 'discord.js';
 import fs from 'fs';
 
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -11,6 +12,8 @@ const client = new Client({
         IntentsBitField.Flags.MessageContent,
     ],
 });
+client.commands = new Collection();
+const commands = [];
 
 
 (async () => {
@@ -45,6 +48,7 @@ const client = new Client({
 
         console.log('Successfully reloaded application (/) commands globally.');
         console.log('Loaded commands:', commands.map(cmd => cmd.name).join(', '));
+        console.log("Successfully Loaded commands globally 🌍")
 
     } catch (error) {
         console.error('Error refreshing commands:', error);
